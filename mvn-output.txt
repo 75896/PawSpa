@@ -1,0 +1,642 @@
+﻿[INFO] Scanning for projects...
+[INFO] 
+[INFO] -------------------------< com.example:spapet >-------------------------
+[INFO] Building  0.0.1-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] --- clean:3.5.0:clean (default-clean) @ spapet ---
+[INFO] Deleting C:\spring\spapet\target
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ spapet ---
+[INFO] Copying 1 resource from src\main\resources to target\classes
+[INFO] Copying 0 resource from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.14.1:compile (default-compile) @ spapet ---
+[INFO] Recompiling the module because of changed source code.
+[INFO] Compiling 151 source files with javac [debug parameters release 21] to target\classes
+[INFO] -------------------------------------------------------------
+[ERROR] COMPILATION ERROR : 
+[INFO] -------------------------------------------------------------
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/controller/Disponibilidad_groomerController.java:[4,34] cannot access com.example.spapet.service.Disponibilidad_groomerService
+  bad source file: C:\spring\spapet\src\main\java\com\example\spapet\service\Disponibilidad_groomerService.java
+    file does not contain class com.example.spapet.service.Disponibilidad_groomerService
+    Please remove or make sure it appears in the correct subdirectory of the sourcepath.
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/controller/GroomersController.java:[4,34] cannot access com.example.spapet.service.GroomersService
+  bad source file: C:\spring\spapet\src\main\java\com\example\spapet\service\GroomersService.java
+    file does not contain class com.example.spapet.service.GroomersService
+    Please remove or make sure it appears in the correct subdirectory of the sourcepath.
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Bloqueos_agendaServiceImpl.java:[8,37] cannot access com.example.spapet.repository.GroomersRepository
+  bad source file: C:\spring\spapet\src\main\java\com\example\spapet\repository\GroomersRepository.java
+    file does not contain class com.example.spapet.repository.GroomersRepository
+    Please remove or make sure it appears in the correct subdirectory of the sourcepath.
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Checklist_itemsServiceImpl.java:[5,37] cannot access com.example.spapet.repository.Checklist_itemsRepository
+  bad source file: C:\spring\spapet\src\main\java\com\example\spapet\repository\Checklist_itemsRepository.java
+    file does not contain class com.example.spapet.repository.Checklist_itemsRepository
+    Please remove or make sure it appears in the correct subdirectory of the sourcepath.
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/ProductosServiceImpl.java:[7,37] cannot access com.example.spapet.repository.ProductosRepository
+  bad source file: C:\spring\spapet\src\main\java\com\example\spapet\repository\ProductosRepository.java
+    file does not contain class com.example.spapet.repository.ProductosRepository
+    Please remove or make sure it appears in the correct subdirectory of the sourcepath.
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/controller/Disponibilidad_groomerController.java:[21,19] cannot find symbol
+  symbol:   class Disponibilidad_groomerService
+  location: class com.example.spapet.controller.Disponibilidad_groomerController
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/controller/GroomersController.java:[21,19] cannot find symbol
+  symbol:   class GroomersService
+  location: class com.example.spapet.controller.GroomersController
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Bloqueos_agendaServiceImpl.java:[25,19] cannot find symbol
+  symbol:   class GroomersRepository
+  location: class com.example.spapet.service.impl.Bloqueos_agendaServiceImpl
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Checklist_itemsServiceImpl.java:[20,19] cannot find symbol
+  symbol:   class Checklist_itemsRepository
+  location: class com.example.spapet.service.impl.Checklist_itemsServiceImpl
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/CitasServiceImpl.java:[32,19] cannot find symbol
+  symbol:   class GroomersRepository
+  location: class com.example.spapet.service.impl.CitasServiceImpl
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Disponibilidad_groomerServiceImpl.java:[23,59] cannot find symbol
+  symbol: class Disponibilidad_groomerService
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Disponibilidad_groomerServiceImpl.java:[26,19] cannot find symbol
+  symbol:   class GroomersRepository
+  location: class com.example.spapet.service.impl.Disponibilidad_groomerServiceImpl
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Fichas_checklistServiceImpl.java:[29,19] cannot find symbol
+  symbol:   class Checklist_itemsRepository
+  location: class com.example.spapet.service.impl.Fichas_checklistServiceImpl
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/GroomersServiceImpl.java:[23,45] cannot find symbol
+  symbol: class GroomersService
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/GroomersServiceImpl.java:[25,19] cannot find symbol
+  symbol:   class GroomersRepository
+  location: class com.example.spapet.service.impl.GroomersServiceImpl
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/ProductosServiceImpl.java:[22,19] cannot find symbol
+  symbol:   class ProductosRepository
+  location: class com.example.spapet.service.impl.ProductosServiceImpl
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Variantes_productosServiceImpl.java:[26,19] cannot find symbol
+  symbol:   class ProductosRepository
+  location: class com.example.spapet.service.impl.Variantes_productosServiceImpl
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Bloqueos_agendaServiceImpl.java:[52,16] cannot find symbol
+  symbol:   method getGroomerId()
+  location: variable dto of type com.example.spapet.dto.Bloqueos_agendaDTO
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Bloqueos_agendaServiceImpl.java:[54,54] cannot find symbol
+  symbol:   method getGroomerId()
+  location: variable dto of type com.example.spapet.dto.Bloqueos_agendaDTO
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Bloqueos_agendaServiceImpl.java:[58,16] cannot find symbol
+  symbol:   method getCreadoPorId()
+  location: variable dto of type com.example.spapet.dto.Bloqueos_agendaDTO
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Bloqueos_agendaServiceImpl.java:[60,56] cannot find symbol
+  symbol:   method getCreadoPorId()
+  location: variable dto of type com.example.spapet.dto.Bloqueos_agendaDTO
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Bloqueos_agendaServiceImpl.java:[64,50] cannot find symbol
+  symbol:   method builder()
+  location: class com.example.spapet.model.Bloqueos_agenda
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Bloqueos_agendaServiceImpl.java:[66,33] cannot find symbol
+  symbol:   method getFechaInicio()
+  location: variable dto of type com.example.spapet.dto.Bloqueos_agendaDTO
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Bloqueos_agendaServiceImpl.java:[67,30] cannot find symbol
+  symbol:   method getFechaFin()
+  location: variable dto of type com.example.spapet.dto.Bloqueos_agendaDTO
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Bloqueos_agendaServiceImpl.java:[68,28] cannot find symbol
+  symbol:   method getMotivo()
+  location: variable dto of type com.example.spapet.dto.Bloqueos_agendaDTO
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Bloqueos_agendaServiceImpl.java:[86,16] cannot find symbol
+  symbol:   method getGroomerId()
+  location: variable dto of type com.example.spapet.dto.Bloqueos_agendaDTO
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Bloqueos_agendaServiceImpl.java:[88,54] cannot find symbol
+  symbol:   method getGroomerId()
+  location: variable dto of type com.example.spapet.dto.Bloqueos_agendaDTO
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Bloqueos_agendaServiceImpl.java:[92,16] cannot find symbol
+  symbol:   method getCreadoPorId()
+  location: variable dto of type com.example.spapet.dto.Bloqueos_agendaDTO
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Bloqueos_agendaServiceImpl.java:[94,56] cannot find symbol
+  symbol:   method getCreadoPorId()
+  location: variable dto of type com.example.spapet.dto.Bloqueos_agendaDTO
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Bloqueos_agendaServiceImpl.java:[98,16] cannot find symbol
+  symbol:   method setGroomers(com.example.spapet.model.Groomers)
+  location: variable bloqueo of type com.example.spapet.model.Bloqueos_agenda
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Bloqueos_agendaServiceImpl.java:[99,35] cannot find symbol
+  symbol:   method getFechaInicio()
+  location: variable dto of type com.example.spapet.dto.Bloqueos_agendaDTO
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Bloqueos_agendaServiceImpl.java:[100,32] cannot find symbol
+  symbol:   method getFechaFin()
+  location: variable dto of type com.example.spapet.dto.Bloqueos_agendaDTO
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Bloqueos_agendaServiceImpl.java:[101,30] cannot find symbol
+  symbol:   method getMotivo()
+  location: variable dto of type com.example.spapet.dto.Bloqueos_agendaDTO
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Bloqueos_agendaServiceImpl.java:[102,16] cannot find symbol
+  symbol:   method setCreadoPor(com.example.spapet.model.Usuarios)
+  location: variable bloqueo of type com.example.spapet.model.Bloqueos_agenda
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Bloqueos_agendaServiceImpl.java:[124,34] cannot find symbol
+  symbol:   method builder()
+  location: class com.example.spapet.dto.Bloqueos_agendaDTO
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Bloqueos_agendaServiceImpl.java:[125,28] cannot find symbol
+  symbol:   method getId()
+  location: variable bloqueo of type com.example.spapet.model.Bloqueos_agenda
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Bloqueos_agendaServiceImpl.java:[128,32] cannot find symbol
+  symbol:   method getGroomers()
+  location: variable bloqueo of type com.example.spapet.model.Bloqueos_agenda
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Bloqueos_agendaServiceImpl.java:[129,42] cannot find symbol
+  symbol:   method getGroomers()
+  location: variable bloqueo of type com.example.spapet.model.Bloqueos_agenda
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Bloqueos_agendaServiceImpl.java:[133,32] cannot find symbol
+  symbol:   method getGroomers()
+  location: variable bloqueo of type com.example.spapet.model.Bloqueos_agenda
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Bloqueos_agendaServiceImpl.java:[134,42] cannot find symbol
+  symbol:   method getGroomers()
+  location: variable bloqueo of type com.example.spapet.model.Bloqueos_agenda
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Bloqueos_agendaServiceImpl.java:[137,37] cannot find symbol
+  symbol:   method getFechaInicio()
+  location: variable bloqueo of type com.example.spapet.model.Bloqueos_agenda
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Bloqueos_agendaServiceImpl.java:[138,34] cannot find symbol
+  symbol:   method getFechaFin()
+  location: variable bloqueo of type com.example.spapet.model.Bloqueos_agenda
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Bloqueos_agendaServiceImpl.java:[139,32] cannot find symbol
+  symbol:   method getMotivo()
+  location: variable bloqueo of type com.example.spapet.model.Bloqueos_agenda
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Bloqueos_agendaServiceImpl.java:[142,32] cannot find symbol
+  symbol:   method getCreadoPor()
+  location: variable bloqueo of type com.example.spapet.model.Bloqueos_agenda
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Bloqueos_agendaServiceImpl.java:[143,42] cannot find symbol
+  symbol:   method getCreadoPor()
+  location: variable bloqueo of type com.example.spapet.model.Bloqueos_agenda
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Bloqueos_agendaServiceImpl.java:[147,32] cannot find symbol
+  symbol:   method getCreadoPor()
+  location: variable bloqueo of type com.example.spapet.model.Bloqueos_agenda
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Bloqueos_agendaServiceImpl.java:[148,42] cannot find symbol
+  symbol:   method getCreadoPor()
+  location: variable bloqueo of type com.example.spapet.model.Bloqueos_agenda
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Bloqueos_agendaServiceImpl.java:[151,34] cannot find symbol
+  symbol:   method getCreadoEn()
+  location: variable bloqueo of type com.example.spapet.model.Bloqueos_agenda
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Categorias_productoServiceImpl.java:[43,60] cannot find symbol
+  symbol:   method builder()
+  location: class com.example.spapet.model.Categorias_producto
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Categorias_productoServiceImpl.java:[44,28] cannot find symbol
+  symbol:   method getNombre()
+  location: variable dto of type com.example.spapet.dto.Categorias_productoDTO
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Categorias_productoServiceImpl.java:[45,33] cannot find symbol
+  symbol:   method getDescripcion()
+  location: variable dto of type com.example.spapet.dto.Categorias_productoDTO
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Categorias_productoServiceImpl.java:[46,31] cannot find symbol
+  symbol:   method getImagenUrl()
+  location: variable dto of type com.example.spapet.dto.Categorias_productoDTO
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Categorias_productoServiceImpl.java:[47,28] cannot find symbol
+  symbol:   method getActiva()
+  location: variable dto of type com.example.spapet.dto.Categorias_productoDTO
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Categorias_productoServiceImpl.java:[61,32] cannot find symbol
+  symbol:   method getNombre()
+  location: variable dto of type com.example.spapet.dto.Categorias_productoDTO
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Categorias_productoServiceImpl.java:[62,37] cannot find symbol
+  symbol:   method getDescripcion()
+  location: variable dto of type com.example.spapet.dto.Categorias_productoDTO
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Categorias_productoServiceImpl.java:[63,35] cannot find symbol
+  symbol:   method getImagenUrl()
+  location: variable dto of type com.example.spapet.dto.Categorias_productoDTO
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Categorias_productoServiceImpl.java:[64,32] cannot find symbol
+  symbol:   method getActiva()
+  location: variable dto of type com.example.spapet.dto.Categorias_productoDTO
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Categorias_productoServiceImpl.java:[86,38] cannot find symbol
+  symbol:   method builder()
+  location: class com.example.spapet.dto.Categorias_productoDTO
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Categorias_productoServiceImpl.java:[87,30] cannot find symbol
+  symbol:   method getId()
+  location: variable categoria of type com.example.spapet.model.Categorias_producto
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Categorias_productoServiceImpl.java:[88,34] cannot find symbol
+  symbol:   method getNombre()
+  location: variable categoria of type com.example.spapet.model.Categorias_producto
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Categorias_productoServiceImpl.java:[89,39] cannot find symbol
+  symbol:   method getDescripcion()
+  location: variable categoria of type com.example.spapet.model.Categorias_producto
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Categorias_productoServiceImpl.java:[90,37] cannot find symbol
+  symbol:   method getImagenUrl()
+  location: variable categoria of type com.example.spapet.model.Categorias_producto
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Categorias_productoServiceImpl.java:[91,34] cannot find symbol
+  symbol:   method getActiva()
+  location: variable categoria of type com.example.spapet.model.Categorias_producto
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Checklist_itemsServiceImpl.java:[43,47] cannot find symbol
+  symbol:   method builder()
+  location: class com.example.spapet.model.Checklist_items
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Checklist_itemsServiceImpl.java:[44,28] cannot find symbol
+  symbol:   method getNombre()
+  location: variable dto of type com.example.spapet.dto.Checklist_itemsDTO
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Checklist_itemsServiceImpl.java:[45,33] cannot find symbol
+  symbol:   method getDescripcion()
+  location: variable dto of type com.example.spapet.dto.Checklist_itemsDTO
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Checklist_itemsServiceImpl.java:[46,33] cannot find symbol
+  symbol:   method getObligatorio()
+  location: variable dto of type com.example.spapet.dto.Checklist_itemsDTO
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Checklist_itemsServiceImpl.java:[47,27] cannot find symbol
+  symbol:   method getOrden()
+  location: variable dto of type com.example.spapet.dto.Checklist_itemsDTO
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Checklist_itemsServiceImpl.java:[61,27] cannot find symbol
+  symbol:   method getNombre()
+  location: variable dto of type com.example.spapet.dto.Checklist_itemsDTO
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Checklist_itemsServiceImpl.java:[62,32] cannot find symbol
+  symbol:   method getDescripcion()
+  location: variable dto of type com.example.spapet.dto.Checklist_itemsDTO
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Checklist_itemsServiceImpl.java:[63,32] cannot find symbol
+  symbol:   method getObligatorio()
+  location: variable dto of type com.example.spapet.dto.Checklist_itemsDTO
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Checklist_itemsServiceImpl.java:[64,26] cannot find symbol
+  symbol:   method getOrden()
+  location: variable dto of type com.example.spapet.dto.Checklist_itemsDTO
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Checklist_itemsServiceImpl.java:[86,34] cannot find symbol
+  symbol:   method builder()
+  location: class com.example.spapet.dto.Checklist_itemsDTO
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Checklist_itemsServiceImpl.java:[87,25] cannot find symbol
+  symbol:   method getId()
+  location: variable item of type com.example.spapet.model.Checklist_items
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Checklist_itemsServiceImpl.java:[88,29] cannot find symbol
+  symbol:   method getNombre()
+  location: variable item of type com.example.spapet.model.Checklist_items
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Checklist_itemsServiceImpl.java:[89,34] cannot find symbol
+  symbol:   method getDescripcion()
+  location: variable item of type com.example.spapet.model.Checklist_items
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Checklist_itemsServiceImpl.java:[90,34] cannot find symbol
+  symbol:   method getObligatorio()
+  location: variable item of type com.example.spapet.model.Checklist_items
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Checklist_itemsServiceImpl.java:[91,28] cannot find symbol
+  symbol:   method getOrden()
+  location: variable item of type com.example.spapet.model.Checklist_items
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/CitasServiceImpl.java:[57,59] cannot find symbol
+  symbol:   method getMascotaId()
+  location: variable dto of type com.example.spapet.dto.CitasDTO
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/CitasServiceImpl.java:[60,59] cannot find symbol
+  symbol:   method getGroomerId()
+  location: variable dto of type com.example.spapet.dto.CitasDTO
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/CitasServiceImpl.java:[63,62] cannot find symbol
+  symbol:   method getServicioId()
+  location: variable dto of type com.example.spapet.dto.CitasDTO
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/CitasServiceImpl.java:[68,16] cannot find symbol
+  symbol:   method getAgendadoPorId()
+  location: variable dto of type com.example.spapet.dto.CitasDTO
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/CitasServiceImpl.java:[70,58] cannot find symbol
+  symbol:   method getAgendadoPorId()
+  location: variable dto of type com.example.spapet.dto.CitasDTO
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/CitasServiceImpl.java:[74,27] cannot find symbol
+  symbol:   method builder()
+  location: class com.example.spapet.model.Citas
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/CitasServiceImpl.java:[78,33] cannot find symbol
+  symbol:   method getFechaInicio()
+  location: variable dto of type com.example.spapet.dto.CitasDTO
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/CitasServiceImpl.java:[79,30] cannot find symbol
+  symbol:   method getFechaFin()
+  location: variable dto of type com.example.spapet.dto.CitasDTO
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/CitasServiceImpl.java:[80,28] cannot find symbol
+  symbol:   method getEstado()
+  location: variable dto of type com.example.spapet.dto.CitasDTO
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/CitasServiceImpl.java:[81,36] cannot find symbol
+  symbol:   method getPrecioAcordado()
+  location: variable dto of type com.example.spapet.dto.CitasDTO
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/CitasServiceImpl.java:[82,34] cannot find symbol
+  symbol:   method getNotasCliente()
+  location: variable dto of type com.example.spapet.dto.CitasDTO
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/CitasServiceImpl.java:[83,39] cannot find symbol
+  symbol:   method getCancelacionMotivo()
+  location: variable dto of type com.example.spapet.dto.CitasDTO
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/CitasServiceImpl.java:[98,59] cannot find symbol
+  symbol:   method getMascotaId()
+  location: variable dto of type com.example.spapet.dto.CitasDTO
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/CitasServiceImpl.java:[101,59] cannot find symbol
+  symbol:   method getGroomerId()
+  location: variable dto of type com.example.spapet.dto.CitasDTO
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/CitasServiceImpl.java:[104,62] cannot find symbol
+  symbol:   method getServicioId()
+  location: variable dto of type com.example.spapet.dto.CitasDTO
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/CitasServiceImpl.java:[109,16] cannot find symbol
+  symbol:   method getAgendadoPorId()
+  location: variable dto of type com.example.spapet.dto.CitasDTO
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/CitasServiceImpl.java:[111,58] cannot find symbol
+  symbol:   method getAgendadoPorId()
+  location: variable dto of type com.example.spapet.dto.CitasDTO
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/CitasServiceImpl.java:[115,13] cannot find symbol
+  symbol:   method setMascotas(com.example.spapet.model.Mascotas)
+  location: variable cita of type com.example.spapet.model.Citas
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/CitasServiceImpl.java:[116,13] cannot find symbol
+  symbol:   method setGroomers(com.example.spapet.model.Groomers)
+  location: variable cita of type com.example.spapet.model.Citas
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/CitasServiceImpl.java:[117,13] cannot find symbol
+  symbol:   method setServicios(com.example.spapet.model.Servicios)
+  location: variable cita of type com.example.spapet.model.Citas
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/CitasServiceImpl.java:[118,32] cannot find symbol
+  symbol:   method getFechaInicio()
+  location: variable dto of type com.example.spapet.dto.CitasDTO
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/CitasServiceImpl.java:[119,29] cannot find symbol
+  symbol:   method getFechaFin()
+  location: variable dto of type com.example.spapet.dto.CitasDTO
+[INFO] 100 errors 
+[INFO] -------------------------------------------------------------
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  4.881 s
+[INFO] Finished at: 2026-05-07T18:02:21-04:00
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.apache.maven.plugins:maven-compiler-plugin:3.14.1:compile (default-compile) on project spapet: Compilation failure: Compilation failure: 
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/controller/Disponibilidad_groomerController.java:[4,34] cannot access com.example.spapet.service.Disponibilidad_groomerService
+[ERROR]   bad source file: C:\spring\spapet\src\main\java\com\example\spapet\service\Disponibilidad_groomerService.java
+[ERROR]     file does not contain class com.example.spapet.service.Disponibilidad_groomerService
+[ERROR]     Please remove or make sure it appears in the correct subdirectory of the sourcepath.
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/controller/GroomersController.java:[4,34] cannot access com.example.spapet.service.GroomersService
+[ERROR]   bad source file: C:\spring\spapet\src\main\java\com\example\spapet\service\GroomersService.java
+[ERROR]     file does not contain class com.example.spapet.service.GroomersService
+[ERROR]     Please remove or make sure it appears in the correct subdirectory of the sourcepath.
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Bloqueos_agendaServiceImpl.java:[8,37] cannot access com.example.spapet.repository.GroomersRepository
+[ERROR]   bad source file: C:\spring\spapet\src\main\java\com\example\spapet\repository\GroomersRepository.java
+[ERROR]     file does not contain class com.example.spapet.repository.GroomersRepository
+[ERROR]     Please remove or make sure it appears in the correct subdirectory of the sourcepath.
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Checklist_itemsServiceImpl.java:[5,37] cannot access com.example.spapet.repository.Checklist_itemsRepository
+[ERROR]   bad source file: C:\spring\spapet\src\main\java\com\example\spapet\repository\Checklist_itemsRepository.java
+[ERROR]     file does not contain class com.example.spapet.repository.Checklist_itemsRepository
+[ERROR]     Please remove or make sure it appears in the correct subdirectory of the sourcepath.
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/ProductosServiceImpl.java:[7,37] cannot access com.example.spapet.repository.ProductosRepository
+[ERROR]   bad source file: C:\spring\spapet\src\main\java\com\example\spapet\repository\ProductosRepository.java
+[ERROR]     file does not contain class com.example.spapet.repository.ProductosRepository
+[ERROR]     Please remove or make sure it appears in the correct subdirectory of the sourcepath.
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/controller/Disponibilidad_groomerController.java:[21,19] cannot find symbol
+[ERROR]   symbol:   class Disponibilidad_groomerService
+[ERROR]   location: class com.example.spapet.controller.Disponibilidad_groomerController
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/controller/GroomersController.java:[21,19] cannot find symbol
+[ERROR]   symbol:   class GroomersService
+[ERROR]   location: class com.example.spapet.controller.GroomersController
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Bloqueos_agendaServiceImpl.java:[25,19] cannot find symbol
+[ERROR]   symbol:   class GroomersRepository
+[ERROR]   location: class com.example.spapet.service.impl.Bloqueos_agendaServiceImpl
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Checklist_itemsServiceImpl.java:[20,19] cannot find symbol
+[ERROR]   symbol:   class Checklist_itemsRepository
+[ERROR]   location: class com.example.spapet.service.impl.Checklist_itemsServiceImpl
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/CitasServiceImpl.java:[32,19] cannot find symbol
+[ERROR]   symbol:   class GroomersRepository
+[ERROR]   location: class com.example.spapet.service.impl.CitasServiceImpl
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Disponibilidad_groomerServiceImpl.java:[23,59] cannot find symbol
+[ERROR]   symbol: class Disponibilidad_groomerService
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Disponibilidad_groomerServiceImpl.java:[26,19] cannot find symbol
+[ERROR]   symbol:   class GroomersRepository
+[ERROR]   location: class com.example.spapet.service.impl.Disponibilidad_groomerServiceImpl
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Fichas_checklistServiceImpl.java:[29,19] cannot find symbol
+[ERROR]   symbol:   class Checklist_itemsRepository
+[ERROR]   location: class com.example.spapet.service.impl.Fichas_checklistServiceImpl
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/GroomersServiceImpl.java:[23,45] cannot find symbol
+[ERROR]   symbol: class GroomersService
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/GroomersServiceImpl.java:[25,19] cannot find symbol
+[ERROR]   symbol:   class GroomersRepository
+[ERROR]   location: class com.example.spapet.service.impl.GroomersServiceImpl
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/ProductosServiceImpl.java:[22,19] cannot find symbol
+[ERROR]   symbol:   class ProductosRepository
+[ERROR]   location: class com.example.spapet.service.impl.ProductosServiceImpl
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Variantes_productosServiceImpl.java:[26,19] cannot find symbol
+[ERROR]   symbol:   class ProductosRepository
+[ERROR]   location: class com.example.spapet.service.impl.Variantes_productosServiceImpl
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Bloqueos_agendaServiceImpl.java:[52,16] cannot find symbol
+[ERROR]   symbol:   method getGroomerId()
+[ERROR]   location: variable dto of type com.example.spapet.dto.Bloqueos_agendaDTO
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Bloqueos_agendaServiceImpl.java:[54,54] cannot find symbol
+[ERROR]   symbol:   method getGroomerId()
+[ERROR]   location: variable dto of type com.example.spapet.dto.Bloqueos_agendaDTO
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Bloqueos_agendaServiceImpl.java:[58,16] cannot find symbol
+[ERROR]   symbol:   method getCreadoPorId()
+[ERROR]   location: variable dto of type com.example.spapet.dto.Bloqueos_agendaDTO
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Bloqueos_agendaServiceImpl.java:[60,56] cannot find symbol
+[ERROR]   symbol:   method getCreadoPorId()
+[ERROR]   location: variable dto of type com.example.spapet.dto.Bloqueos_agendaDTO
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Bloqueos_agendaServiceImpl.java:[64,50] cannot find symbol
+[ERROR]   symbol:   method builder()
+[ERROR]   location: class com.example.spapet.model.Bloqueos_agenda
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Bloqueos_agendaServiceImpl.java:[66,33] cannot find symbol
+[ERROR]   symbol:   method getFechaInicio()
+[ERROR]   location: variable dto of type com.example.spapet.dto.Bloqueos_agendaDTO
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Bloqueos_agendaServiceImpl.java:[67,30] cannot find symbol
+[ERROR]   symbol:   method getFechaFin()
+[ERROR]   location: variable dto of type com.example.spapet.dto.Bloqueos_agendaDTO
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Bloqueos_agendaServiceImpl.java:[68,28] cannot find symbol
+[ERROR]   symbol:   method getMotivo()
+[ERROR]   location: variable dto of type com.example.spapet.dto.Bloqueos_agendaDTO
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Bloqueos_agendaServiceImpl.java:[86,16] cannot find symbol
+[ERROR]   symbol:   method getGroomerId()
+[ERROR]   location: variable dto of type com.example.spapet.dto.Bloqueos_agendaDTO
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Bloqueos_agendaServiceImpl.java:[88,54] cannot find symbol
+[ERROR]   symbol:   method getGroomerId()
+[ERROR]   location: variable dto of type com.example.spapet.dto.Bloqueos_agendaDTO
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Bloqueos_agendaServiceImpl.java:[92,16] cannot find symbol
+[ERROR]   symbol:   method getCreadoPorId()
+[ERROR]   location: variable dto of type com.example.spapet.dto.Bloqueos_agendaDTO
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Bloqueos_agendaServiceImpl.java:[94,56] cannot find symbol
+[ERROR]   symbol:   method getCreadoPorId()
+[ERROR]   location: variable dto of type com.example.spapet.dto.Bloqueos_agendaDTO
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Bloqueos_agendaServiceImpl.java:[98,16] cannot find symbol
+[ERROR]   symbol:   method setGroomers(com.example.spapet.model.Groomers)
+[ERROR]   location: variable bloqueo of type com.example.spapet.model.Bloqueos_agenda
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Bloqueos_agendaServiceImpl.java:[99,35] cannot find symbol
+[ERROR]   symbol:   method getFechaInicio()
+[ERROR]   location: variable dto of type com.example.spapet.dto.Bloqueos_agendaDTO
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Bloqueos_agendaServiceImpl.java:[100,32] cannot find symbol
+[ERROR]   symbol:   method getFechaFin()
+[ERROR]   location: variable dto of type com.example.spapet.dto.Bloqueos_agendaDTO
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Bloqueos_agendaServiceImpl.java:[101,30] cannot find symbol
+[ERROR]   symbol:   method getMotivo()
+[ERROR]   location: variable dto of type com.example.spapet.dto.Bloqueos_agendaDTO
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Bloqueos_agendaServiceImpl.java:[102,16] cannot find symbol
+[ERROR]   symbol:   method setCreadoPor(com.example.spapet.model.Usuarios)
+[ERROR]   location: variable bloqueo of type com.example.spapet.model.Bloqueos_agenda
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Bloqueos_agendaServiceImpl.java:[124,34] cannot find symbol
+[ERROR]   symbol:   method builder()
+[ERROR]   location: class com.example.spapet.dto.Bloqueos_agendaDTO
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Bloqueos_agendaServiceImpl.java:[125,28] cannot find symbol
+[ERROR]   symbol:   method getId()
+[ERROR]   location: variable bloqueo of type com.example.spapet.model.Bloqueos_agenda
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Bloqueos_agendaServiceImpl.java:[128,32] cannot find symbol
+[ERROR]   symbol:   method getGroomers()
+[ERROR]   location: variable bloqueo of type com.example.spapet.model.Bloqueos_agenda
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Bloqueos_agendaServiceImpl.java:[129,42] cannot find symbol
+[ERROR]   symbol:   method getGroomers()
+[ERROR]   location: variable bloqueo of type com.example.spapet.model.Bloqueos_agenda
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Bloqueos_agendaServiceImpl.java:[133,32] cannot find symbol
+[ERROR]   symbol:   method getGroomers()
+[ERROR]   location: variable bloqueo of type com.example.spapet.model.Bloqueos_agenda
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Bloqueos_agendaServiceImpl.java:[134,42] cannot find symbol
+[ERROR]   symbol:   method getGroomers()
+[ERROR]   location: variable bloqueo of type com.example.spapet.model.Bloqueos_agenda
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Bloqueos_agendaServiceImpl.java:[137,37] cannot find symbol
+[ERROR]   symbol:   method getFechaInicio()
+[ERROR]   location: variable bloqueo of type com.example.spapet.model.Bloqueos_agenda
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Bloqueos_agendaServiceImpl.java:[138,34] cannot find symbol
+[ERROR]   symbol:   method getFechaFin()
+[ERROR]   location: variable bloqueo of type com.example.spapet.model.Bloqueos_agenda
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Bloqueos_agendaServiceImpl.java:[139,32] cannot find symbol
+[ERROR]   symbol:   method getMotivo()
+[ERROR]   location: variable bloqueo of type com.example.spapet.model.Bloqueos_agenda
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Bloqueos_agendaServiceImpl.java:[142,32] cannot find symbol
+[ERROR]   symbol:   method getCreadoPor()
+[ERROR]   location: variable bloqueo of type com.example.spapet.model.Bloqueos_agenda
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Bloqueos_agendaServiceImpl.java:[143,42] cannot find symbol
+[ERROR]   symbol:   method getCreadoPor()
+[ERROR]   location: variable bloqueo of type com.example.spapet.model.Bloqueos_agenda
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Bloqueos_agendaServiceImpl.java:[147,32] cannot find symbol
+[ERROR]   symbol:   method getCreadoPor()
+[ERROR]   location: variable bloqueo of type com.example.spapet.model.Bloqueos_agenda
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Bloqueos_agendaServiceImpl.java:[148,42] cannot find symbol
+[ERROR]   symbol:   method getCreadoPor()
+[ERROR]   location: variable bloqueo of type com.example.spapet.model.Bloqueos_agenda
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Bloqueos_agendaServiceImpl.java:[151,34] cannot find symbol
+[ERROR]   symbol:   method getCreadoEn()
+[ERROR]   location: variable bloqueo of type com.example.spapet.model.Bloqueos_agenda
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Categorias_productoServiceImpl.java:[43,60] cannot find symbol
+[ERROR]   symbol:   method builder()
+[ERROR]   location: class com.example.spapet.model.Categorias_producto
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Categorias_productoServiceImpl.java:[44,28] cannot find symbol
+[ERROR]   symbol:   method getNombre()
+[ERROR]   location: variable dto of type com.example.spapet.dto.Categorias_productoDTO
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Categorias_productoServiceImpl.java:[45,33] cannot find symbol
+[ERROR]   symbol:   method getDescripcion()
+[ERROR]   location: variable dto of type com.example.spapet.dto.Categorias_productoDTO
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Categorias_productoServiceImpl.java:[46,31] cannot find symbol
+[ERROR]   symbol:   method getImagenUrl()
+[ERROR]   location: variable dto of type com.example.spapet.dto.Categorias_productoDTO
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Categorias_productoServiceImpl.java:[47,28] cannot find symbol
+[ERROR]   symbol:   method getActiva()
+[ERROR]   location: variable dto of type com.example.spapet.dto.Categorias_productoDTO
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Categorias_productoServiceImpl.java:[61,32] cannot find symbol
+[ERROR]   symbol:   method getNombre()
+[ERROR]   location: variable dto of type com.example.spapet.dto.Categorias_productoDTO
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Categorias_productoServiceImpl.java:[62,37] cannot find symbol
+[ERROR]   symbol:   method getDescripcion()
+[ERROR]   location: variable dto of type com.example.spapet.dto.Categorias_productoDTO
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Categorias_productoServiceImpl.java:[63,35] cannot find symbol
+[ERROR]   symbol:   method getImagenUrl()
+[ERROR]   location: variable dto of type com.example.spapet.dto.Categorias_productoDTO
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Categorias_productoServiceImpl.java:[64,32] cannot find symbol
+[ERROR]   symbol:   method getActiva()
+[ERROR]   location: variable dto of type com.example.spapet.dto.Categorias_productoDTO
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Categorias_productoServiceImpl.java:[86,38] cannot find symbol
+[ERROR]   symbol:   method builder()
+[ERROR]   location: class com.example.spapet.dto.Categorias_productoDTO
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Categorias_productoServiceImpl.java:[87,30] cannot find symbol
+[ERROR]   symbol:   method getId()
+[ERROR]   location: variable categoria of type com.example.spapet.model.Categorias_producto
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Categorias_productoServiceImpl.java:[88,34] cannot find symbol
+[ERROR]   symbol:   method getNombre()
+[ERROR]   location: variable categoria of type com.example.spapet.model.Categorias_producto
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Categorias_productoServiceImpl.java:[89,39] cannot find symbol
+[ERROR]   symbol:   method getDescripcion()
+[ERROR]   location: variable categoria of type com.example.spapet.model.Categorias_producto
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Categorias_productoServiceImpl.java:[90,37] cannot find symbol
+[ERROR]   symbol:   method getImagenUrl()
+[ERROR]   location: variable categoria of type com.example.spapet.model.Categorias_producto
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Categorias_productoServiceImpl.java:[91,34] cannot find symbol
+[ERROR]   symbol:   method getActiva()
+[ERROR]   location: variable categoria of type com.example.spapet.model.Categorias_producto
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Checklist_itemsServiceImpl.java:[43,47] cannot find symbol
+[ERROR]   symbol:   method builder()
+[ERROR]   location: class com.example.spapet.model.Checklist_items
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Checklist_itemsServiceImpl.java:[44,28] cannot find symbol
+[ERROR]   symbol:   method getNombre()
+[ERROR]   location: variable dto of type com.example.spapet.dto.Checklist_itemsDTO
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Checklist_itemsServiceImpl.java:[45,33] cannot find symbol
+[ERROR]   symbol:   method getDescripcion()
+[ERROR]   location: variable dto of type com.example.spapet.dto.Checklist_itemsDTO
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Checklist_itemsServiceImpl.java:[46,33] cannot find symbol
+[ERROR]   symbol:   method getObligatorio()
+[ERROR]   location: variable dto of type com.example.spapet.dto.Checklist_itemsDTO
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Checklist_itemsServiceImpl.java:[47,27] cannot find symbol
+[ERROR]   symbol:   method getOrden()
+[ERROR]   location: variable dto of type com.example.spapet.dto.Checklist_itemsDTO
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Checklist_itemsServiceImpl.java:[61,27] cannot find symbol
+[ERROR]   symbol:   method getNombre()
+[ERROR]   location: variable dto of type com.example.spapet.dto.Checklist_itemsDTO
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Checklist_itemsServiceImpl.java:[62,32] cannot find symbol
+[ERROR]   symbol:   method getDescripcion()
+[ERROR]   location: variable dto of type com.example.spapet.dto.Checklist_itemsDTO
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Checklist_itemsServiceImpl.java:[63,32] cannot find symbol
+[ERROR]   symbol:   method getObligatorio()
+[ERROR]   location: variable dto of type com.example.spapet.dto.Checklist_itemsDTO
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Checklist_itemsServiceImpl.java:[64,26] cannot find symbol
+[ERROR]   symbol:   method getOrden()
+[ERROR]   location: variable dto of type com.example.spapet.dto.Checklist_itemsDTO
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Checklist_itemsServiceImpl.java:[86,34] cannot find symbol
+[ERROR]   symbol:   method builder()
+[ERROR]   location: class com.example.spapet.dto.Checklist_itemsDTO
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Checklist_itemsServiceImpl.java:[87,25] cannot find symbol
+[ERROR]   symbol:   method getId()
+[ERROR]   location: variable item of type com.example.spapet.model.Checklist_items
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Checklist_itemsServiceImpl.java:[88,29] cannot find symbol
+[ERROR]   symbol:   method getNombre()
+[ERROR]   location: variable item of type com.example.spapet.model.Checklist_items
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Checklist_itemsServiceImpl.java:[89,34] cannot find symbol
+[ERROR]   symbol:   method getDescripcion()
+[ERROR]   location: variable item of type com.example.spapet.model.Checklist_items
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Checklist_itemsServiceImpl.java:[90,34] cannot find symbol
+[ERROR]   symbol:   method getObligatorio()
+[ERROR]   location: variable item of type com.example.spapet.model.Checklist_items
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/Checklist_itemsServiceImpl.java:[91,28] cannot find symbol
+[ERROR]   symbol:   method getOrden()
+[ERROR]   location: variable item of type com.example.spapet.model.Checklist_items
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/CitasServiceImpl.java:[57,59] cannot find symbol
+[ERROR]   symbol:   method getMascotaId()
+[ERROR]   location: variable dto of type com.example.spapet.dto.CitasDTO
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/CitasServiceImpl.java:[60,59] cannot find symbol
+[ERROR]   symbol:   method getGroomerId()
+[ERROR]   location: variable dto of type com.example.spapet.dto.CitasDTO
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/CitasServiceImpl.java:[63,62] cannot find symbol
+[ERROR]   symbol:   method getServicioId()
+[ERROR]   location: variable dto of type com.example.spapet.dto.CitasDTO
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/CitasServiceImpl.java:[68,16] cannot find symbol
+[ERROR]   symbol:   method getAgendadoPorId()
+[ERROR]   location: variable dto of type com.example.spapet.dto.CitasDTO
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/CitasServiceImpl.java:[70,58] cannot find symbol
+[ERROR]   symbol:   method getAgendadoPorId()
+[ERROR]   location: variable dto of type com.example.spapet.dto.CitasDTO
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/CitasServiceImpl.java:[74,27] cannot find symbol
+[ERROR]   symbol:   method builder()
+[ERROR]   location: class com.example.spapet.model.Citas
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/CitasServiceImpl.java:[78,33] cannot find symbol
+[ERROR]   symbol:   method getFechaInicio()
+[ERROR]   location: variable dto of type com.example.spapet.dto.CitasDTO
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/CitasServiceImpl.java:[79,30] cannot find symbol
+[ERROR]   symbol:   method getFechaFin()
+[ERROR]   location: variable dto of type com.example.spapet.dto.CitasDTO
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/CitasServiceImpl.java:[80,28] cannot find symbol
+[ERROR]   symbol:   method getEstado()
+[ERROR]   location: variable dto of type com.example.spapet.dto.CitasDTO
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/CitasServiceImpl.java:[81,36] cannot find symbol
+[ERROR]   symbol:   method getPrecioAcordado()
+[ERROR]   location: variable dto of type com.example.spapet.dto.CitasDTO
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/CitasServiceImpl.java:[82,34] cannot find symbol
+[ERROR]   symbol:   method getNotasCliente()
+[ERROR]   location: variable dto of type com.example.spapet.dto.CitasDTO
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/CitasServiceImpl.java:[83,39] cannot find symbol
+[ERROR]   symbol:   method getCancelacionMotivo()
+[ERROR]   location: variable dto of type com.example.spapet.dto.CitasDTO
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/CitasServiceImpl.java:[98,59] cannot find symbol
+[ERROR]   symbol:   method getMascotaId()
+[ERROR]   location: variable dto of type com.example.spapet.dto.CitasDTO
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/CitasServiceImpl.java:[101,59] cannot find symbol
+[ERROR]   symbol:   method getGroomerId()
+[ERROR]   location: variable dto of type com.example.spapet.dto.CitasDTO
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/CitasServiceImpl.java:[104,62] cannot find symbol
+[ERROR]   symbol:   method getServicioId()
+[ERROR]   location: variable dto of type com.example.spapet.dto.CitasDTO
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/CitasServiceImpl.java:[109,16] cannot find symbol
+[ERROR]   symbol:   method getAgendadoPorId()
+[ERROR]   location: variable dto of type com.example.spapet.dto.CitasDTO
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/CitasServiceImpl.java:[111,58] cannot find symbol
+[ERROR]   symbol:   method getAgendadoPorId()
+[ERROR]   location: variable dto of type com.example.spapet.dto.CitasDTO
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/CitasServiceImpl.java:[115,13] cannot find symbol
+[ERROR]   symbol:   method setMascotas(com.example.spapet.model.Mascotas)
+[ERROR]   location: variable cita of type com.example.spapet.model.Citas
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/CitasServiceImpl.java:[116,13] cannot find symbol
+[ERROR]   symbol:   method setGroomers(com.example.spapet.model.Groomers)
+[ERROR]   location: variable cita of type com.example.spapet.model.Citas
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/CitasServiceImpl.java:[117,13] cannot find symbol
+[ERROR]   symbol:   method setServicios(com.example.spapet.model.Servicios)
+[ERROR]   location: variable cita of type com.example.spapet.model.Citas
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/CitasServiceImpl.java:[118,32] cannot find symbol
+[ERROR]   symbol:   method getFechaInicio()
+[ERROR]   location: variable dto of type com.example.spapet.dto.CitasDTO
+[ERROR] /C:/spring/spapet/src/main/java/com/example/spapet/service/impl/CitasServiceImpl.java:[119,29] cannot find symbol
+[ERROR]   symbol:   method getFechaFin()
+[ERROR]   location: variable dto of type com.example.spapet.dto.CitasDTO
+[ERROR] -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoFailureException
