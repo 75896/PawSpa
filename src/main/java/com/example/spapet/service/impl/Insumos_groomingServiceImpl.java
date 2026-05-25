@@ -1,7 +1,7 @@
 package com.example.spapet.service.impl;
 
 import com.example.spapet.dto.Insumos_groomingDTO;
-
+import com.example.spapet.dto.ProductosDTO;
 import com.example.spapet.model.Fichas_grooming;
 import com.example.spapet.model.Insumos_grooming;
 import com.example.spapet.model.Variantes_productos;
@@ -13,8 +13,8 @@ import com.example.spapet.repository.Variantes_productosRepository;
 import com.example.spapet.service.Insumos_groomingService;
 
 import lombok.RequiredArgsConstructor;
-
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.UUID;
@@ -24,107 +24,107 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class Insumos_groomingServiceImpl implements Insumos_groomingService {
 
-    private final Insumos_groomingRepository insumosGroomingRepository;
-    private final Fichas_groomingRepository fichasGroomingRepository;
-    private final Variantes_productosRepository variantesProductosRepository;
+        private final Insumos_groomingRepository insumosRepository;
+        private final Variantes_productosRepository variantesRepository;
+        private final Fichas_groomingRepository fichasRepository;
 
-    @Override
-    public List<Insumos_groomingDTO> obtenerTodos() {
+        @Override
+        public List<Insumos_groomingDTO> listarPorFicha(UUID fichaId) {
+                return insumosRepository.findByFichaId(fichaId)
+                                .stream().map(this::toDTO).collect(Collectors.toList());
+        }
 
-        return insumosGroomingRepository.findAll()
-                .stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
-    }
+        @Override
+        @Transactional
+        public Insumos_groomingDTO registrar(Insumos_groomingDTO dto) {
+                Fichas_grooming ficha = fichasRepository.findById(dto.getFichaId())
+                                .orElseThrow(() -> new RuntimeException("Ficha no encontrada"));
 
-    @Override
-    public Insumos_groomingDTO obtenerPorId(UUID id) {
+                Variantes_productos variante = variantesRepository.findById(dto.getVarianteId())
+                                .orElseThrow(() -> new RuntimeException("Variante no encontrada"));
 
-        Insumos_grooming insumo = insumosGroomingRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Insumo grooming no encontrado"));
+                if (variante.getStock() < dto.getCantidad().intValue()) {
+                        throw new RuntimeException("Stock insuficiente para " + variante.getNombre());
+                }
 
-        return convertToDTO(insumo);
-    }
+                // Descontar stock
+                variante.setStock(variante.getStock() - dto.getCantidad().intValue());
 
-    @Override
-    public Insumos_groomingDTO crear(Insumos_groomingDTO dto) {
+                // Actualizar nivel de alerta
+                if (variante.getStock() == 0) {
+                        variante.setNivelAlerta("critico");
+                } else if (variante.getStock() <= variante.getStockMinimo()) {
+                        variante.setNivelAlerta("bajo");
+                } else {
+                        variante.setNivelAlerta("ok");
+                }
+                variantesRepository.save(variante);
 
-        Fichas_grooming ficha = fichasGroomingRepository.findById(dto.getFichaId())
-                .orElseThrow(() -> new RuntimeException("Ficha grooming no encontrada"));
+                Insumos_grooming insumo = Insumos_grooming.builder()
+                                .ficha(ficha)
+                                .variante(variante)
+                                .cantidad(dto.getCantidad())
+                                .unidad(dto.getUnidad() != null ? dto.getUnidad() : "unidad")
+                                .build();
 
-        Variantes_productos variante = variantesProductosRepository.findById(dto.getVarianteId())
-                .orElseThrow(() -> new RuntimeException("Variante no encontrada"));
+                return toDTO(insumosRepository.save(insumo));
+        }
 
-        Insumos_grooming insumo = Insumos_grooming.builder()
-                .ficha(ficha)
-                .variante(variante)
-                .cantidad(dto.getCantidad())
-                .unidad(dto.getUnidad())
-                .build();
+        @Override
+        @Transactional
+        public void eliminar(UUID id) {
+                Insumos_grooming insumo = insumosRepository.findById(id)
+                                .orElseThrow(() -> new RuntimeException("Insumo no encontrado"));
 
-        Insumos_grooming insumoGuardado = insumosGroomingRepository.save(insumo);
+                // Devolver stock
+                Variantes_productos variante = insumo.getVariante();
+                variante.setStock(variante.getStock() + insumo.getCantidad().intValue());
+                if (variante.getStock() > variante.getStockMinimo()) {
+                        variante.setNivelAlerta("ok");
+                }
+                variantesRepository.save(variante);
 
-        return convertToDTO(insumoGuardado);
-    }
+                insumosRepository.deleteById(id);
+        }
 
-    @Override
-    public Insumos_groomingDTO actualizar(UUID id, Insumos_groomingDTO dto) {
+        @Override
+        public List<ProductosDTO> listarProductosDisponibles() {
+                return variantesRepository.findByActivaTrue()
+                                .stream()
+                                .filter(v -> v.getStock() > 0)
+                                .map(v -> ProductosDTO.builder()
+                                                .id(v.getId())
+                                                .nombre(v.getProducto().getNombre() + " — " + v.getNombre())
+                                                .precioBase(v.getPrecio())
+                                                .activo(v.getActiva())
+                                                .build())
+                                .collect(Collectors.toList());
+        }
 
-        Insumos_grooming insumo = insumosGroomingRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Insumo grooming no encontrado"));
+        @Override
+        public List<ProductosDTO> listarStockBajo() {
+                return variantesRepository.findConStockBajo()
+                                .stream()
+                                .map(v -> ProductosDTO.builder()
+                                                .id(v.getId())
+                                                .nombre(v.getProducto().getNombre() + " — " + v.getNombre())
+                                                .precioBase(v.getPrecio())
+                                                .activo(v.getActiva())
+                                                .build())
+                                .collect(Collectors.toList());
+        }
 
-        Fichas_grooming ficha = fichasGroomingRepository.findById(dto.getFichaId())
-                .orElseThrow(() -> new RuntimeException("Ficha grooming no encontrada"));
-
-        Variantes_productos variante = variantesProductosRepository.findById(dto.getVarianteId())
-                .orElseThrow(() -> new RuntimeException("Variante no encontrada"));
-
-        insumo.setFicha(ficha);
-        insumo.setVariante(variante);
-        insumo.setCantidad(dto.getCantidad());
-        insumo.setUnidad(dto.getUnidad());
-
-        Insumos_grooming insumoActualizado = insumosGroomingRepository.save(insumo);
-
-        return convertToDTO(insumoActualizado);
-    }
-
-    @Override
-    public void eliminar(UUID id) {
-
-        Insumos_grooming insumo = insumosGroomingRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Insumo grooming no encontrado"));
-
-        insumosGroomingRepository.delete(insumo);
-    }
-
-    // =========================
-    // CONVERTERS
-    // =========================
-
-    private Insumos_groomingDTO convertToDTO(Insumos_grooming insumo) {
-
-        return Insumos_groomingDTO.builder()
-                .id(insumo.getId())
-
-                .fichaId(
-                        insumo.getFicha() != null
-                                ? insumo.getFicha().getId()
-                                : null)
-
-                .varianteId(
-                        insumo.getVariante() != null
-                                ? insumo.getVariante().getId()
-                                : null)
-
-                .varianteNombre(
-                        insumo.getVariante() != null
-                                ? insumo.getVariante().getNombre()
-                                : null)
-
-                .cantidad(insumo.getCantidad())
-                .unidad(insumo.getUnidad())
-                .registradoEn(insumo.getRegistradoEn())
-                .build();
-    }
+        private Insumos_groomingDTO toDTO(Insumos_grooming i) {
+                return Insumos_groomingDTO.builder()
+                                .id(i.getId())
+                                .fichaId(i.getFicha().getId())
+                                .varianteId(i.getVariante().getId())
+                                .varianteNombre(i.getVariante().getNombre())
+                                .productoNombre(i.getVariante().getProducto().getNombre())
+                                .cantidad(i.getCantidad())
+                                .unidad(i.getUnidad())
+                                .stockDisponible(i.getVariante().getStock())
+                                .registradoEn(i.getRegistradoEn())
+                                .build();
+        }
 }

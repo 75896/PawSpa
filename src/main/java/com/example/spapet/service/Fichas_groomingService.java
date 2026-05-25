@@ -4,16 +4,18 @@ import com.example.spapet.dto.Fichas_groomingDTO;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.Optional;
 
 public interface Fichas_groomingService {
 
-    List<Fichas_groomingDTO> obtenerTodos();
+    Optional<Fichas_groomingDTO> buscarPorCitaId(UUID citaId);
 
-    Fichas_groomingDTO obtenerPorId(UUID id);
+    List<Fichas_groomingDTO> listarPorCorreo(String correo);
 
-    Fichas_groomingDTO crear(Fichas_groomingDTO fichasGroomingDTO);
+    Fichas_groomingDTO abrirFicha(UUID citaId, String correo);
 
-    Fichas_groomingDTO actualizar(UUID id, Fichas_groomingDTO fichasGroomingDTO);
+    Fichas_groomingDTO actualizar(UUID fichaId, Fichas_groomingDTO dto);
 
-    void eliminar(UUID id);
+    Fichas_groomingDTO cerrar(UUID fichaId);
+
 }

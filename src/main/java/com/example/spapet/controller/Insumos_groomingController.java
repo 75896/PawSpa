@@ -20,43 +20,43 @@ public class Insumos_groomingController {
 
     private final Insumos_groomingService insumosGroomingService;
 
-    @GetMapping
-    public ResponseEntity<List<Insumos_groomingDTO>> obtenerTodos() {
-        return ResponseEntity.ok(
-                insumosGroomingService.obtenerTodos());
-    }
+    // @GetMapping
+    // public ResponseEntity<List<Insumos_groomingDTO>> obtenerTodos() {
+    // return ResponseEntity.ok(
+    // insumosGroomingService.obtenerTodos());
+    // }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<Insumos_groomingDTO> obtenerPorId(
-            @PathVariable UUID id) {
+    // @GetMapping("/{id}")
+    // public ResponseEntity<Insumos_groomingDTO> obtenerPorId(
+    // @PathVariable UUID id) {
+    //
+    // return ResponseEntity.ok(
+    // insumosGroomingService.obtenerPorId(id));
+    // }
 
-        return ResponseEntity.ok(
-                insumosGroomingService.obtenerPorId(id));
-    }
+    // @PostMapping
+    // public ResponseEntity<Insumos_groomingDTO> crear(
+    // @RequestBody Insumos_groomingDTO dto) {
 
-    @PostMapping
-    public ResponseEntity<Insumos_groomingDTO> crear(
-            @RequestBody Insumos_groomingDTO dto) {
+    // return ResponseEntity
+    // .status(HttpStatus.CREATED)
+    // .body(insumosGroomingService.crear(dto));
+    // }
 
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(insumosGroomingService.crear(dto));
-    }
+    // @PutMapping("/{id}")
+    // public ResponseEntity<Insumos_groomingDTO> actualizar(
+    // @PathVariable UUID id,
+    // @RequestBody Insumos_groomingDTO dto) {
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Insumos_groomingDTO> actualizar(
-            @PathVariable UUID id,
-            @RequestBody Insumos_groomingDTO dto) {
+    // return ResponseEntity.ok(
+    // insumosGroomingService.actualizar(id, dto));
+    // }
 
-        return ResponseEntity.ok(
-                insumosGroomingService.actualizar(id, dto));
-    }
+    // @DeleteMapping("/{id}")
+    // public ResponseEntity<Void> eliminar(
+    // @PathVariable UUID id) {
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> eliminar(
-            @PathVariable UUID id) {
-
-        insumosGroomingService.eliminar(id);
-        return ResponseEntity.noContent().build();
-    }
+    // insumosGroomingService.eliminar(id);
+    // return ResponseEntity.noContent().build();
+    // }
 }

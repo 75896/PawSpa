@@ -57,6 +57,8 @@ public class CitasDTO implements Serializable {
 
     private UUID agendadoPorId;
     private String agendadoPorNombre;
+    private String mascotaAlergias;
+    private String mascotaRestricciones;
 
     private OffsetDateTime creadoEn;
     private OffsetDateTime actualizadoEn;

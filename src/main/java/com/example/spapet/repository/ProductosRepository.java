@@ -5,7 +5,12 @@ import org.springframework.stereotype.Repository;
 import com.example.spapet.model.Productos;
 import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.UUID;
+import java.util.*;
 
 @Repository
 public interface ProductosRepository extends JpaRepository<Productos, UUID> {
+
+    List<Productos> findByActivoTrue();
+
+    List<Productos> findByActivoTrueAndCategoriaId(UUID categoriaId);
 }

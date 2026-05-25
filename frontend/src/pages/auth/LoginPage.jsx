@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -13,7 +13,10 @@ const schema = z.object({
   password: z.string().min(1, "La contraseña es obligatoria"),
 });
 
+
+
 const LoginPage = () => {
+  const location = useLocation();
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading]           = useState(false);
   const [captchaToken, setCaptchaToken] = useState(null);
@@ -49,29 +52,35 @@ const LoginPage = () => {
 }, []);
 
   const onSubmit = async (data) => {
-   // if (!captchaToken) {
-   //   toast.error("Por favor completa el captcha");
-   //   return;
-   // }
-    setLoading(true);
-    try {
-      const res = await login({ ...data, captchaToken });
-      setAuth(res.data.token, res.data);
-      toast.success(`Bienvenido, ${res.data.nombre}!`);
-      switch (res.data.rol) {
-        case "admin":   navigate("/admin");   break;
-        case "groomer": navigate("/groomer"); break;
-        case "recepcion": navigate("/recepcion"); break;
-        default:        navigate("/cliente");
-      }
-    } catch (err) {
-      toast.error(err.response?.data?.message || "Credenciales inválidas");
-      if (window.grecaptcha) window.grecaptcha.reset();
-      setCaptchaToken(null);
-    } finally {
-      setLoading(false);
+  setLoading(true);
+  try {
+    const res = await login({ ...data, captchaToken });
+    setAuth(res.data.token, res.data);
+    toast.success(`Bienvenido, ${res.data.nombre}!`);
+
+    // Si hay items pendientes en el carrito, ir al carrito
+    const carritosPendientes = sessionStorage.getItem("carritosPendientes");
+    const from = location?.state?.from;
+
+    if (res.data.rol === "cliente" && (carritosPendientes || from === "/carrito")) {
+      navigate("/carrito");
+      return;
     }
-  };
+
+    switch (res.data.rol) {
+      case "admin":     navigate("/admin");     break;
+      case "groomer":   navigate("/groomer");   break;
+      case "recepcion": navigate("/recepcion"); break;
+      default:          navigate("/cliente");
+    }
+  } catch (err) {
+    toast.error(err.response?.data?.message || "Credenciales inválidas");
+    if (window.grecaptcha) window.grecaptcha.reset();
+    setCaptchaToken(null);
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-50 via-white to-green-50 flex items-center justify-center p-4">

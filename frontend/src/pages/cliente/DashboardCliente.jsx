@@ -6,18 +6,21 @@ import {
   PawPrint, X, Loader2, Clock,
   CheckCircle, AlertCircle
 } from "lucide-react";
-import { getMisMascotas, crearMascota, getMisCitas } from "../../api/clienteApi";
+//import { getMisMascotas, crearMascota, getMisCitas } from "../../api/clienteApi";
 import useAuthStore from "../../store/authStore";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
+import { getMisMascotas, crearMascota, getMisCitas, listarRazas, listarRazasPorEspecie } from "../../api/clienteApi";
 
 const schema = z.object({
   nombre:       z.string().min(2, "Mínimo 2 caracteres"),
   especie:      z.enum(["perro", "gato", "conejo", "ave", "otro"]),
+  razaId:       z.string().optional(),
   sexo:         z.enum(["macho", "hembra", "desconocido"]),
+  fechaNac:     z.string().optional(),
   temperamento: z.enum(["tranquilo", "normal", "nervioso", "agresivo", "desconocido"]),
   pesoKg:       z.string().optional(),
   colorPelaje:  z.string().max(100).optional(),
@@ -64,6 +67,8 @@ const DashboardCliente = () => {
   const [loadingAccion, setLoadingAccion]     = useState(false);
   const { logout, usuario }                   = useAuthStore();
   const navigate                              = useNavigate();
+  const [razas, setRazas]               = useState([]);
+  const [especieSeleccionada, setEspecieSeleccionada] = useState("perro");
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm({
     resolver: zodResolver(schema),
@@ -81,6 +86,15 @@ const DashboardCliente = () => {
     }
   };
 
+  const cargarRazas = async (especie) => {
+  try {
+    const res = await listarRazasPorEspecie(especie);
+    setRazas(res.data);
+  } catch {
+    toast.error("Error al cargar razas");
+  }
+};
+
   const cargarCitas = async () => {
     try {
       const res = await getMisCitas();
@@ -93,9 +107,10 @@ const DashboardCliente = () => {
   };
 
   useEffect(() => {
-    cargarMascotas();
-    cargarCitas();
-  }, []);
+  cargarMascotas();
+  cargarCitas();
+  cargarRazas("perro");
+}, []);
 
   const handleLogout = () => {
     logout();
@@ -103,23 +118,25 @@ const DashboardCliente = () => {
   };
 
   const handleCrearMascota = async (data) => {
-    setLoadingAccion(true);
-    try {
-      const payload = {
-        ...data,
-        pesoKg: data.pesoKg ? parseFloat(data.pesoKg) : null,
-      };
-      await crearMascota(payload);
-      toast.success("¡Mascota registrada!");
-      setModalMascota(false);
-      reset();
-      cargarMascotas();
-    } catch (err) {
-      toast.error(err.response?.data?.message || "Error al registrar mascota");
-    } finally {
-      setLoadingAccion(false);
-    }
-  };
+  setLoadingAccion(true);
+  try {
+    const payload = {
+      ...data,
+      pesoKg:  data.pesoKg  ? parseFloat(data.pesoKg) : null,
+      razaId:  data.razaId  || null,
+      fechaNac: data.fechaNac || null,
+    };
+    await crearMascota(payload);
+    toast.success("¡Mascota registrada!");
+    setModalMascota(false);
+    reset();
+    cargarMascotas();
+  } catch (err) {
+    toast.error(err.response?.data?.message || "Error al registrar mascota");
+  } finally {
+    setLoadingAccion(false);
+  }
+};
 
   const inputClass = "w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-300 text-sm";
   const selectClass = inputClass;
@@ -279,87 +296,156 @@ const DashboardCliente = () => {
         <Modal title="Registrar mascota" onClose={() => { setModalMascota(false); reset(); }}>
           <form onSubmit={handleSubmit(handleCrearMascota)} className="space-y-4">
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Nombre</label>
-              <input {...register("nombre")} placeholder="Nombre de tu mascota" className={inputClass} />
-              {errors.nombre && <p className="text-red-500 text-xs mt-1">{errors.nombre.message}</p>}
-            </div>
+  {/* Nombre */}
+  <div>
+    <label className="block text-sm font-medium text-gray-700 mb-1">Nombre</label>
+    <input
+      {...register("nombre")}
+      placeholder="Nombre de tu mascota"
+      className={inputClass}
+    />
+    {errors.nombre && <p className="text-red-500 text-xs mt-1">{errors.nombre.message}</p>}
+  </div>
 
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Especie</label>
-                <select {...register("especie")} className={selectClass}>
-                  <option value="perro">🐶 Perro</option>
-                  <option value="gato">🐱 Gato</option>
-                  <option value="conejo">🐰 Conejo</option>
-                  <option value="ave">🦜 Ave</option>
-                  <option value="otro">🐾 Otro</option>
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Sexo</label>
-                <select {...register("sexo")} className={selectClass}>
-                  <option value="macho">Macho</option>
-                  <option value="hembra">Hembra</option>
-                  <option value="desconocido">Desconocido</option>
-                </select>
-              </div>
-            </div>
+  {/* Especie y Sexo */}
+  <div className="grid grid-cols-2 gap-3">
+    <div>
+      <label className="block text-sm font-medium text-gray-700 mb-1">Especie</label>
+      <select
+        {...register("especie")}
+        onChange={(e) => {
+          setEspecieSeleccionada(e.target.value);
+          cargarRazas(e.target.value);
+        }}
+        className={selectClass}
+      >
+        <option value="perro">🐶 Perro</option>
+        <option value="gato">🐱 Gato</option>
+        <option value="conejo">🐰 Conejo</option>
+        <option value="ave">🦜 Ave</option>
+        <option value="otro">🐾 Otro</option>
+      </select>
+    </div>
+    <div>
+      <label className="block text-sm font-medium text-gray-700 mb-1">Sexo</label>
+      <select {...register("sexo")} className={selectClass}>
+        <option value="macho">Macho</option>
+        <option value="hembra">Hembra</option>
+        <option value="desconocido">Desconocido</option>
+      </select>
+    </div>
+  </div>
 
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Temperamento</label>
-                <select {...register("temperamento")} className={selectClass}>
-                  <option value="tranquilo">Tranquilo</option>
-                  <option value="normal">Normal</option>
-                  <option value="nervioso">Nervioso</option>
-                  <option value="agresivo">Agresivo</option>
-                  <option value="desconocido">Desconocido</option>
-                </select>
-              </div>
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Peso (kg)</label>
-                <input {...register("pesoKg")} type="number" step="0.01" placeholder="0.00" className={inputClass} />
-              </div>
-            </div>
+  {/* Raza */}
+  <div>
+    <label className="block text-sm font-medium text-gray-700 mb-1">
+      Raza <span className="text-gray-400">(opcional)</span>
+    </label>
+    <select {...register("razaId")} className={selectClass}>
+      <option value="">Seleccionar raza</option>
+      {razas.map((r) => (
+        <option key={r.id} value={r.id}>
+          {r.nombre} — {r.tamanio}
+        </option>
+      ))}
+    </select>
+  </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Color de pelaje</label>
-              <input {...register("colorPelaje")} placeholder="Ej: negro, blanco, café" className={inputClass} />
-            </div>
+  {/* Fecha nacimiento y Peso */}
+  <div className="grid grid-cols-2 gap-3">
+    <div>
+      <label className="block text-sm font-medium text-gray-700 mb-1">
+        Fecha de nacimiento <span className="text-gray-400">(opcional)</span>
+      </label>
+      <input
+        {...register("fechaNac")}
+        type="date"
+        max={new Date().toISOString().split("T")[0]}
+        className={inputClass}
+      />
+    </div>
+    <div>
+      <label className="block text-sm font-medium text-gray-700 mb-1">
+        Peso (kg) <span className="text-gray-400">(opcional)</span>
+      </label>
+      <input
+        {...register("pesoKg")}
+        type="number"
+        step="0.01"
+        placeholder="0.00"
+        className={inputClass}
+      />
+    </div>
+  </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Alergias <span className="text-gray-400">(opcional)</span>
-              </label>
-              <textarea {...register("alergias")} rows={2} placeholder="Describe las alergias si las tiene" className={inputClass} />
-            </div>
+  {/* Temperamento y Color */}
+  <div className="grid grid-cols-2 gap-3">
+    <div>
+      <label className="block text-sm font-medium text-gray-700 mb-1">Temperamento</label>
+      <select {...register("temperamento")} className={selectClass}>
+        <option value="tranquilo">Tranquilo</option>
+        <option value="normal">Normal</option>
+        <option value="nervioso">Nervioso</option>
+        <option value="agresivo">Agresivo</option>
+        <option value="desconocido">Desconocido</option>
+      </select>
+    </div>
+    <div>
+      <label className="block text-sm font-medium text-gray-700 mb-1">
+        Color de pelaje <span className="text-gray-400">(opcional)</span>
+      </label>
+      <input
+        {...register("colorPelaje")}
+        placeholder="Ej: negro, blanco"
+        className={inputClass}
+      />
+    </div>
+  </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">
-                Restricciones <span className="text-gray-400">(opcional)</span>
-              </label>
-              <textarea {...register("restricciones")} rows={2} placeholder="Restricciones o cuidados especiales" className={inputClass} />
-            </div>
+  {/* Alergias */}
+  <div>
+    <label className="block text-sm font-medium text-gray-700 mb-1">
+      Alergias <span className="text-gray-400">(opcional)</span>
+    </label>
+    <textarea
+      {...register("alergias")}
+      rows={2}
+      placeholder="Describe las alergias si las tiene..."
+      className={inputClass}
+    />
+  </div>
 
-            <div className="flex gap-3 pt-2">
-              <button
-                type="button"
-                onClick={() => { setModalMascota(false); reset(); }}
-                className="flex-1 py-2.5 rounded-xl border border-gray-200 text-sm text-gray-600 hover:bg-gray-50"
-              >
-                Cancelar
-              </button>
-              <button
-                type="submit"
-                disabled={loadingAccion}
-                className="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-purple-500 to-purple-600 text-white text-sm font-medium disabled:opacity-60 flex items-center justify-center gap-2"
-              >
-                {loadingAccion && <Loader2 className="w-4 h-4 animate-spin" />}
-                Registrar
-              </button>
-            </div>
-          </form>
+  {/* Restricciones */}
+  <div>
+    <label className="block text-sm font-medium text-gray-700 mb-1">
+      Restricciones <span className="text-gray-400">(opcional)</span>
+    </label>
+    <textarea
+      {...register("restricciones")}
+      rows={2}
+      placeholder="Cuidados especiales o restricciones..."
+      className={inputClass}
+    />
+  </div>
+
+  <div className="flex gap-3 pt-2">
+    <button
+      type="button"
+      onClick={() => { setModalMascota(false); reset(); }}
+      className="flex-1 py-2.5 rounded-xl border border-gray-200 text-sm text-gray-600 hover:bg-gray-50"
+    >
+      Cancelar
+    </button>
+    <button
+      type="submit"
+      disabled={loadingAccion}
+      className="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-purple-500 to-purple-600 text-white text-sm font-medium disabled:opacity-60 flex items-center justify-center gap-2"
+    >
+      {loadingAccion && <Loader2 className="w-4 h-4 animate-spin" />}
+      Registrar
+    </button>
+  </div>
+</form>
         </Modal>
       )}
 

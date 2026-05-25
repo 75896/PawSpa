@@ -1,5 +1,6 @@
 package com.example.spapet.service;
 
+import com.example.spapet.dto.ProductoConVariantesDTO;
 import com.example.spapet.dto.ProductosDTO;
 
 import java.util.List;
@@ -16,4 +17,10 @@ public interface ProductosService {
     ProductosDTO actualizar(UUID id, ProductosDTO productosDTO);
 
     void eliminar(UUID id);
+
+    List<ProductosDTO> obtenerActivos();
+
+    List<ProductosDTO> obtenerActivosPorCategoria(UUID categoriaId);
+
+    ProductoConVariantesDTO obtenerConVariantes(UUID id);
 }

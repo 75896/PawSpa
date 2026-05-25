@@ -43,33 +43,30 @@ public class SecurityConfig {
                                 .authorizeHttpRequests(auth -> auth
                                                 // Públicos
                                                 .requestMatchers(
-                                                                "/api/auth/**")
+                                                                "/api/auth/**",
+                                                                "/api/razas/**",
+                                                                "/api/productos/publico",
+                                                                "/api/productos/publico/**",
+                                                                "/api/categorias-producto/**")
                                                 .permitAll()
                                                 // Solo admin
-                                                .requestMatchers(
-                                                                "/api/admin/**")
-                                                .hasAnyRole("ADMIN", "RECEPCION")
-                                                // Admin y recepción
-                                                .requestMatchers(
-                                                                "/api/recepcion/**",
-                                                                "/api/clientes/**")
-                                                .hasAnyRole("ADMIN", "RECEPCION")
-
-                                                // Citas
-                                                .requestMatchers(
-                                                                "/api/citas/**")
-                                                .hasAnyRole("ADMIN", "RECEPCION", "GROOMER")
-                                                // Groomers
-                                                .requestMatchers(
-                                                                "/api/groomer/**",
-                                                                "/api/fichas/**")
-                                                .hasAnyRole("ADMIN", "GROOMER")
-                                                // Clientes
-                                                .requestMatchers(
-                                                                "/api/mascotas/**",
+                                                .requestMatchers("/api/admin/**").hasAnyRole("ADMIN", "RECEPCION")
+                                                // Cliente — DEBE ir ANTES que /api/clientes/**
+                                                .requestMatchers("/api/cliente/**", "/api/mascotas/**",
                                                                 "/api/pedidos/**")
                                                 .hasAnyRole("ADMIN", "CLIENTE")
-                                                // Cualquier otro endpoint requiere autenticación
+                                                // Recepción — va DESPUÉS
+                                                .requestMatchers("/api/recepcion/**", "/api/clientes/**")
+                                                .hasAnyRole("ADMIN", "RECEPCION")
+                                                // Citas
+                                                .requestMatchers("/api/citas/**")
+                                                .hasAnyRole("ADMIN", "RECEPCION", "GROOMER")
+                                                // Groomers
+                                                .requestMatchers("/api/groomers/**", "/api/fichas/**")
+                                                .hasAnyRole("ADMIN", "GROOMER")
+                                                // Perfil
+                                                .requestMatchers("/api/perfil/**").authenticated()
+                                                // Cualquier otro
                                                 .anyRequest().authenticated())
                                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 

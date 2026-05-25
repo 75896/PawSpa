@@ -6,152 +6,142 @@ import com.example.spapet.dto.Fichas_groomingDTO;
 import com.example.spapet.model.Citas;
 import com.example.spapet.model.Fichas_grooming;
 import com.example.spapet.model.Groomers;
-
+import com.example.spapet.model.Mascotas;
+import com.example.spapet.model.Usuarios;
 import com.example.spapet.repository.CitasRepository;
 import com.example.spapet.repository.Fichas_groomingRepository;
 import com.example.spapet.repository.GroomersRepository;
-
+import com.example.spapet.repository.UsuariosRepository;
 import com.example.spapet.service.Fichas_groomingService;
 
 import lombok.RequiredArgsConstructor;
-
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class Fichas_groomingServiceImpl implements Fichas_groomingService {
 
-    private final Fichas_groomingRepository fichasGroomingRepository;
-    private final CitasRepository citasRepository;
-    private final GroomersRepository groomersRepository;
+        private final Fichas_groomingRepository fichasRepository;
+        private final CitasRepository citasRepository;
+        private final GroomersRepository groomersRepository;
+        private final UsuariosRepository usuariosRepository;
 
-    @Override
-    public List<Fichas_groomingDTO> obtenerTodos() {
+        @Override
+        public List<Fichas_groomingDTO> listarPorCorreo(String correo) {
+                Usuarios usuario = usuariosRepository.findByCorreo(correo)
+                                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+                Groomers groomer = groomersRepository.findByUsuariosId(usuario.getId())
+                                .orElseThrow(() -> new RuntimeException("Groomer no encontrado"));
+                return fichasRepository.findByGroomersId(groomer.getId())
+                                .stream().map(this::toDTO).collect(Collectors.toList());
+        }
 
-        return fichasGroomingRepository.findAll()
-                .stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
-    }
+        @Override
+        @Transactional
+        public Fichas_groomingDTO abrirFicha(UUID citaId, String correo) {
+                Citas cita = citasRepository.findById(citaId)
+                                .orElseThrow(() -> new RuntimeException("Cita no encontrada"));
 
-    @Override
-    public Fichas_groomingDTO obtenerPorId(UUID id) {
+                // Verificar si ya existe ficha
+                fichasRepository.findByCitasId(citaId).ifPresent(f -> {
+                        throw new RuntimeException("Ya existe una ficha para esta cita");
+                });
 
-        Fichas_grooming ficha = fichasGroomingRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Ficha grooming no encontrada"));
+                Usuarios usuario = usuariosRepository.findByCorreo(correo)
+                                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+                Groomers groomer = groomersRepository.findByUsuariosId(usuario.getId())
+                                .orElseThrow(() -> new RuntimeException("Groomer no encontrado"));
 
-        return convertToDTO(ficha);
-    }
+                Fichas_grooming ficha = Fichas_grooming.builder()
+                                .citas(cita)
+                                .groomers(groomer)
+                                .estado("abierta")
+                                .tieneNudos(false)
+                                .tienePulgas(false)
+                                .tieneHeridas(false)
+                                .build();
 
-    @Override
-    public Fichas_groomingDTO crear(Fichas_groomingDTO dto) {
+                // Cambiar estado de la cita a en_proceso
+                cita.setEstado("en_proceso");
+                citasRepository.save(cita);
 
-        Citas cita = citasRepository.findById(dto.getCitaId())
-                .orElseThrow(() -> new RuntimeException("Cita no encontrada"));
+                return toDTO(fichasRepository.save(ficha));
+        }
 
-        Groomers groomer = groomersRepository.findById(dto.getGroomerId())
-                .orElseThrow(() -> new RuntimeException("Groomer no encontrado"));
+        @Override
+        @Transactional
+        public Fichas_groomingDTO actualizar(UUID fichaId, Fichas_groomingDTO dto) {
+                Fichas_grooming ficha = fichasRepository.findById(fichaId)
+                                .orElseThrow(() -> new RuntimeException("Ficha no encontrada"));
 
-        Fichas_grooming ficha = Fichas_grooming.builder()
-                .citas(cita)
-                .groomers(groomer)
-                .estado(dto.getEstado())
-                .tieneNudos(dto.getTieneNudos())
-                .tienePulgas(dto.getTienePulgas())
-                .tieneHeridas(dto.getTieneHeridas())
-                .nivelNudos(dto.getNivelNudos())
-                .observacionesIngreso(dto.getObservacionesIngreso())
-                .observacionesSalida(dto.getObservacionesSalida())
-                .recomendaciones(dto.getRecomendaciones())
-                .pesoKgActual(dto.getPesoKgActual())
-                .cerradaEn(dto.getCerradaEn())
-                .build();
+                ficha.setTieneNudos(dto.getTieneNudos());
+                ficha.setTienePulgas(dto.getTienePulgas());
+                ficha.setTieneHeridas(dto.getTieneHeridas());
+                ficha.setNivelNudos(dto.getNivelNudos());
+                ficha.setObservacionesIngreso(dto.getObservacionesIngreso());
+                ficha.setObservacionesSalida(dto.getObservacionesSalida());
+                ficha.setRecomendaciones(dto.getRecomendaciones());
+                ficha.setPesoKgActual(dto.getPesoKgActual());
+                ficha.setEstado(dto.getEstado());
 
-        Fichas_grooming fichaGuardada = fichasGroomingRepository.save(ficha);
+                return toDTO(fichasRepository.save(ficha));
+        }
 
-        return convertToDTO(fichaGuardada);
-    }
+        @Override
+        @Transactional
+        public Fichas_groomingDTO cerrar(UUID fichaId) {
+                Fichas_grooming ficha = fichasRepository.findById(fichaId)
+                                .orElseThrow(() -> new RuntimeException("Ficha no encontrada"));
 
-    @Override
-    public Fichas_groomingDTO actualizar(UUID id, Fichas_groomingDTO dto) {
+                ficha.setEstado("cerrada");
+                ficha.setCerradaEn(OffsetDateTime.now());
 
-        Fichas_grooming ficha = fichasGroomingRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Ficha grooming no encontrada"));
+                // Cambiar estado de la cita a completada
+                Citas cita = ficha.getCitas();
+                cita.setEstado("completada");
+                citasRepository.save(cita);
 
-        Citas cita = citasRepository.findById(dto.getCitaId())
-                .orElseThrow(() -> new RuntimeException("Cita no encontrada"));
+                return toDTO(fichasRepository.save(ficha));
+        }
 
-        Groomers groomer = groomersRepository.findById(dto.getGroomerId())
-                .orElseThrow(() -> new RuntimeException("Groomer no encontrado"));
+        @Override
+        public Optional<Fichas_groomingDTO> buscarPorCitaId(UUID citaId) {
+                return fichasRepository.findByCitasId(citaId)
+                                .map(this::toDTO);
+        }
 
-        ficha.setCitas(cita);
-        ficha.setGroomers(groomer);
-        ficha.setEstado(dto.getEstado());
-        ficha.setTieneNudos(dto.getTieneNudos());
-        ficha.setTienePulgas(dto.getTienePulgas());
-        ficha.setTieneHeridas(dto.getTieneHeridas());
-        ficha.setNivelNudos(dto.getNivelNudos());
-        ficha.setObservacionesIngreso(dto.getObservacionesIngreso());
-        ficha.setObservacionesSalida(dto.getObservacionesSalida());
-        ficha.setRecomendaciones(dto.getRecomendaciones());
-        ficha.setPesoKgActual(dto.getPesoKgActual());
-        ficha.setCerradaEn(dto.getCerradaEn());
-
-        Fichas_grooming fichaActualizada = fichasGroomingRepository.save(ficha);
-
-        return convertToDTO(fichaActualizada);
-    }
-
-    @Override
-    public void eliminar(UUID id) {
-
-        Fichas_grooming ficha = fichasGroomingRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Ficha grooming no encontrada"));
-
-        fichasGroomingRepository.delete(ficha);
-    }
-
-    // =========================
-    // CONVERTERS
-    // =========================
-
-    private Fichas_groomingDTO convertToDTO(Fichas_grooming ficha) {
-
-        return Fichas_groomingDTO.builder()
-                .id(ficha.getId())
-
-                .citaId(
-                        ficha.getCitas() != null
-                                ? ficha.getCitas().getId()
-                                : null)
-
-                .groomerId(
-                        ficha.getGroomers() != null
-                                ? ficha.getGroomers().getId()
-                                : null)
-
-                .groomerNombre(
-                        ficha.getGroomers() != null
-                                ? ficha.getGroomers().getUsuarios().getNombre()
-                                : null)
-
-                .estado(ficha.getEstado())
-                .tieneNudos(ficha.getTieneNudos())
-                .tienePulgas(ficha.getTienePulgas())
-                .tieneHeridas(ficha.getTieneHeridas())
-                .nivelNudos(ficha.getNivelNudos())
-                .observacionesIngreso(ficha.getObservacionesIngreso())
-                .observacionesSalida(ficha.getObservacionesSalida())
-                .recomendaciones(ficha.getRecomendaciones())
-                .pesoKgActual(ficha.getPesoKgActual())
-                .abiertaEn(ficha.getAbiertaEn())
-                .cerradaEn(ficha.getCerradaEn())
-                .creadoEn(ficha.getCreadoEn())
-                .actualizadoEn(ficha.getActualizadoEn())
-                .build();
-    }
+        private Fichas_groomingDTO toDTO(Fichas_grooming f) {
+                Mascotas mascota = f.getCitas().getMascotas();
+                return Fichas_groomingDTO.builder()
+                                .id(f.getId())
+                                .citaId(f.getCitas().getId())
+                                .mascotaNombre(mascota.getNombre())
+                                .mascotaEspecie(mascota.getEspecie())
+                                .mascotaTemperamento(mascota.getTemperamento())
+                                .mascotaAlergias(mascota.getAlergias())
+                                .mascotaRestricciones(mascota.getRestricciones())
+                                .groomerId(f.getGroomers().getId())
+                                .groomerNombre(f.getGroomers().getUsuarios().getNombre())
+                                .groomerApellido(f.getGroomers().getUsuarios().getApellido())
+                                .estado(f.getEstado())
+                                .tieneNudos(f.getTieneNudos())
+                                .tienePulgas(f.getTienePulgas())
+                                .tieneHeridas(f.getTieneHeridas())
+                                .nivelNudos(f.getNivelNudos())
+                                .observacionesIngreso(f.getObservacionesIngreso())
+                                .observacionesSalida(f.getObservacionesSalida())
+                                .recomendaciones(f.getRecomendaciones())
+                                .pesoKgActual(f.getPesoKgActual())
+                                .abiertaEn(f.getAbiertaEn())
+                                .cerradaEn(f.getCerradaEn())
+                                .creadoEn(f.getCreadoEn())
+                                .build();
+        }
 }

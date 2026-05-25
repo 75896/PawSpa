@@ -6,6 +6,7 @@ import com.example.spapet.model.Mascotas;
 import com.example.spapet.model.Usuarios;
 import com.example.spapet.repository.ClientesRepository;
 import com.example.spapet.repository.MascotasRepository;
+import com.example.spapet.repository.RazasRepository;
 import com.example.spapet.repository.UsuariosRepository;
 import com.example.spapet.service.MascotasService;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,7 @@ public class MascotasServiceImpl implements MascotasService {
         private final MascotasRepository mascotaRepository;
         private final ClientesRepository clienteRepository;
         private final UsuariosRepository usuarioRepository;
+        private final RazasRepository razasRepository;
 
         @Override
         public List<MascotasDTO> obtenerTodos() {
@@ -57,6 +59,15 @@ public class MascotasServiceImpl implements MascotasService {
                 mascota.setColorPelaje(dto.getColorPelaje());
                 mascota.setPesoKg(dto.getPesoKg());
                 mascota.setFechaNac(dto.getFechaNac());
+
+                // Actualizar raza si viene
+                if (dto.getRazaId() != null) {
+                        razasRepository.findById(dto.getRazaId())
+                                        .ifPresent(mascota::setRazas);
+                } else {
+                        mascota.setRazas(null);
+                }
+
                 return toDTO(mascotaRepository.save(mascota));
         }
 
@@ -85,8 +96,14 @@ public class MascotasServiceImpl implements MascotasService {
                 return toDTO(mascotaRepository.save(mascota));
         }
 
+        @Override
+        public List<MascotasDTO> listarPorClienteId(UUID clienteId) {
+                return mascotaRepository.findByClientesId(clienteId)
+                                .stream().map(this::toDTO).collect(Collectors.toList());
+        }
+
         private Mascotas buildMascota(MascotasDTO dto, Clientes cliente) {
-                return Mascotas.builder()
+                Mascotas mascota = Mascotas.builder()
                                 .clientes(cliente)
                                 .nombre(dto.getNombre())
                                 .especie(dto.getEspecie())
@@ -99,6 +116,14 @@ public class MascotasServiceImpl implements MascotasService {
                                 .fechaNac(dto.getFechaNac())
                                 .activa(true)
                                 .build();
+
+                // Asignar raza si viene
+                if (dto.getRazaId() != null) {
+                        razasRepository.findById(dto.getRazaId())
+                                        .ifPresent(mascota::setRazas);
+                }
+
+                return mascota;
         }
 
         private MascotasDTO toDTO(Mascotas m) {
@@ -116,15 +141,11 @@ public class MascotasServiceImpl implements MascotasService {
                                 .colorPelaje(m.getColorPelaje())
                                 .pesoKg(m.getPesoKg())
                                 .fechaNac(m.getFechaNac())
+                                .razaId(m.getRazas() != null ? m.getRazas().getId() : null)
+                                .razaNombre(m.getRazas() != null ? m.getRazas().getNombre() : null)
                                 .activa(m.getActiva())
                                 .fotoUrl(m.getFotoUrl())
                                 .creadoEn(m.getCreadoEn())
                                 .build();
-        }
-
-        @Override
-        public List<MascotasDTO> listarPorClienteId(UUID clienteId) {
-                return mascotaRepository.findByClientesId(clienteId)
-                                .stream().map(this::toDTO).collect(Collectors.toList());
         }
 }

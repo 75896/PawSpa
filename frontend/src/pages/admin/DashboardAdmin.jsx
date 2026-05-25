@@ -4,7 +4,7 @@ import toast from "react-hot-toast";
 import {
   Users, Plus, Pencil, PowerOff, Power,
   LogOut, Heart, Search, X, Loader2,
-  ShieldCheck, Scissors, PhoneCall, User
+  ShieldCheck, Scissors, PhoneCall, User, Package
 } from "lucide-react";
 import {
   listarUsuarios, crearUsuario,
@@ -183,6 +183,14 @@ const DashboardAdmin = () => {
             <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-green-500 flex items-center justify-center">
               <Heart className="w-4 h-4 text-white" />
             </div>
+
+            <button
+  onClick={() => navigate("/admin/inventario")}
+  className="flex items-center gap-2 text-sm text-gray-600 hover:text-purple-600 px-3 py-2 rounded-lg hover:bg-purple-50 transition-colors"
+>
+  <Package className="w-4 h-4" />
+  Inventario
+</button>
 
             
 <button

@@ -18,4 +18,5 @@ public interface CitasService {
     void eliminar(UUID id);
 
     List<CitasDTO> listarPorCorreo(String correo);
+
 }

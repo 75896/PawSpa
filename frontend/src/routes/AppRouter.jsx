@@ -16,6 +16,8 @@ import OlvidePasswordPage  from "../pages/auth/OlvidePasswordPage";
 import CambiarPasswordPage from "../pages/auth/CambiarPasswordPage";
 import AuditoriaPage from "../pages/admin/AuditoriaPage";
 import AgendaPage from "../pages/recepcion/AgendaPage";
+import InventarioPage from "../pages/admin/InventarioPage";
+import CarritoPage from "../pages/cliente/CarritoPage";
 
 
 //const ProtectedRoute = ({ children, roles }) => {
@@ -46,6 +48,18 @@ const AppRouter = () => {
 <Route path="/admin" element={
   <ProtectedRoute roles={["admin"]}>
     <DashboardAdmin />
+  </ProtectedRoute>
+} />
+
+<Route path="/admin/inventario" element={
+  <ProtectedRoute roles={["admin"]}>
+    <InventarioPage />
+  </ProtectedRoute>
+} />
+
+<Route path="/carrito" element={
+  <ProtectedRoute roles={["cliente"]}>
+    <CarritoPage />
   </ProtectedRoute>
 } />
 
