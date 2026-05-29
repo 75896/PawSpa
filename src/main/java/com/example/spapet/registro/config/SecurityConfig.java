@@ -47,7 +47,8 @@ public class SecurityConfig {
                                                                 "/api/razas/**",
                                                                 "/api/productos/publico",
                                                                 "/api/productos/publico/**",
-                                                                "/api/categorias-producto/**")
+                                                                "/api/categorias-producto/**",
+                                                                "/api/configuracion/qr_pago_url")
                                                 .permitAll()
                                                 // Solo admin
                                                 .requestMatchers("/api/admin/**").hasAnyRole("ADMIN", "RECEPCION")
@@ -67,6 +68,9 @@ public class SecurityConfig {
                                                 // Perfil
                                                 .requestMatchers("/api/perfil/**").authenticated()
                                                 // Cualquier otro
+                                                .requestMatchers("/api/facturas/**", "/api/pagos/**")
+                                                .hasAnyRole("ADMIN", "RECEPCION")
+
                                                 .anyRequest().authenticated())
                                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 

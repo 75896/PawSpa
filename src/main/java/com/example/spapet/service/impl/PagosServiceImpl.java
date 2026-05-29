@@ -1,21 +1,17 @@
 package com.example.spapet.service.impl;
 
+import com.example.spapet.dto.CierreCajaDTO;
+import com.example.spapet.dto.CobrarDTO;
 import com.example.spapet.dto.PagosDTO;
-
-import com.example.spapet.model.Facturas;
-import com.example.spapet.model.Pagos;
-import com.example.spapet.model.Usuarios;
-
-import com.example.spapet.repository.FacturasRepository;
-import com.example.spapet.repository.PagosRepository;
-import com.example.spapet.repository.UsuariosRepository;
-
+import com.example.spapet.model.*;
+import com.example.spapet.repository.*;
 import com.example.spapet.service.PagosService;
-
 import lombok.RequiredArgsConstructor;
-
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.time.*;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
@@ -24,129 +20,157 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class PagosServiceImpl implements PagosService {
 
-    private final PagosRepository pagosRepository;
-    private final FacturasRepository facturasRepository;
-    private final UsuariosRepository usuariosRepository;
+        private final PagosRepository pagosRepository;
+        private final FacturasRepository facturasRepository;
+        private final UsuariosRepository usuariosRepository;
 
-    @Override
-    public List<PagosDTO> obtenerTodos() {
+        // =============================================
+        // CRUD existente
+        // =============================================
 
-        return pagosRepository.findAll()
-                .stream()
-                .map(this::convertToDTO)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public PagosDTO obtenerPorId(UUID id) {
-
-        Pagos pago = pagosRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Pago no encontrado"));
-
-        return convertToDTO(pago);
-    }
-
-    @Override
-    public PagosDTO crear(PagosDTO dto) {
-
-        Facturas factura = facturasRepository.findById(dto.getFacturaId())
-                .orElseThrow(() -> new RuntimeException("Factura no encontrada"));
-
-        Usuarios usuario = null;
-
-        if (dto.getRegistradoPorId() != null) {
-
-            usuario = usuariosRepository.findById(dto.getRegistradoPorId())
-                    .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        @Override
+        public List<PagosDTO> obtenerTodos() {
+                return pagosRepository.findAll().stream().map(this::convertToDTO).collect(Collectors.toList());
         }
 
-        Pagos pago = Pagos.builder()
-                .factura(factura)
-                .monto(dto.getMonto())
-                .medio(dto.getMedio())
-                .referencia(dto.getReferencia())
-                .estado(dto.getEstado())
-                .registradoPor(usuario)
-                .build();
-
-        Pagos pagoGuardado = pagosRepository.save(pago);
-
-        return convertToDTO(pagoGuardado);
-    }
-
-    @Override
-    public PagosDTO actualizar(UUID id, PagosDTO dto) {
-
-        Pagos pago = pagosRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Pago no encontrado"));
-
-        Facturas factura = facturasRepository.findById(dto.getFacturaId())
-                .orElseThrow(() -> new RuntimeException("Factura no encontrada"));
-
-        Usuarios usuario = null;
-
-        if (dto.getRegistradoPorId() != null) {
-
-            usuario = usuariosRepository.findById(dto.getRegistradoPorId())
-                    .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+        @Override
+        public PagosDTO obtenerPorId(UUID id) {
+                return convertToDTO(pagosRepository.findById(id)
+                                .orElseThrow(() -> new RuntimeException("Pago no encontrado")));
         }
 
-        pago.setFactura(factura);
-        pago.setMonto(dto.getMonto());
-        pago.setMedio(dto.getMedio());
-        pago.setReferencia(dto.getReferencia());
-        pago.setEstado(dto.getEstado());
-        pago.setRegistradoPor(usuario);
+        @Override
+        public PagosDTO crear(PagosDTO dto) {
+                Facturas factura = facturasRepository.findById(dto.getFacturaId())
+                                .orElseThrow(() -> new RuntimeException("Factura no encontrada"));
+                Usuarios usuario = dto.getRegistradoPorId() != null
+                                ? usuariosRepository.findById(dto.getRegistradoPorId()).orElse(null)
+                                : null;
+                Pagos pago = Pagos.builder()
+                                .factura(factura).monto(dto.getMonto()).medio(dto.getMedio())
+                                .referencia(dto.getReferencia()).estado(dto.getEstado())
+                                .registradoPor(usuario).build();
+                return convertToDTO(pagosRepository.save(pago));
+        }
 
-        Pagos pagoActualizado = pagosRepository.save(pago);
+        @Override
+        public PagosDTO actualizar(UUID id, PagosDTO dto) {
+                Pagos pago = pagosRepository.findById(id)
+                                .orElseThrow(() -> new RuntimeException("Pago no encontrado"));
+                pago.setMedio(dto.getMedio());
+                pago.setReferencia(dto.getReferencia());
+                pago.setEstado(dto.getEstado());
+                return convertToDTO(pagosRepository.save(pago));
+        }
 
-        return convertToDTO(pagoActualizado);
-    }
+        @Override
+        public void eliminar(UUID id) {
+                pagosRepository.delete(pagosRepository.findById(id)
+                                .orElseThrow(() -> new RuntimeException("Pago no encontrado")));
+        }
 
-    @Override
-    public void eliminar(UUID id) {
+        // =============================================
+        // PUNTO DE VENTA
+        // =============================================
 
-        Pagos pago = pagosRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Pago no encontrado"));
+        @Override
+        @Transactional
+        public PagosDTO cobrar(CobrarDTO dto, String correoRecepcion) {
+                Facturas factura = facturasRepository.findById(dto.getFacturaId())
+                                .orElseThrow(() -> new RuntimeException("Factura no encontrada"));
 
-        pagosRepository.delete(pago);
-    }
+                if ("pagada".equals(factura.getEstado())) {
+                        throw new RuntimeException("Esta factura ya fue pagada");
+                }
 
-    // =========================
-    // CONVERTERS
-    // =========================
+                Usuarios recepcion = usuariosRepository.findByCorreo(correoRecepcion)
+                                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-    private PagosDTO convertToDTO(Pagos pago) {
+                Pagos pago = Pagos.builder()
+                                .factura(factura)
+                                .monto(dto.getMonto())
+                                .medio(dto.getMedio())
+                                .referencia(dto.getReferencia())
+                                .estado("pagado")
+                                .registradoPor(recepcion)
+                                .build();
 
-        return PagosDTO.builder()
-                .id(pago.getId())
+                pagosRepository.save(pago);
 
-                .facturaId(
-                        pago.getFactura() != null
-                                ? pago.getFactura().getId()
-                                : null)
+                // Marcar factura como pagada
+                factura.setEstado("pagada");
+                facturasRepository.save(factura);
 
-                .facturaNumero(
-                        pago.getFactura() != null
-                                ? pago.getFactura().getNumero()
-                                : null)
+                return convertToDTO(pago);
+        }
 
-                .monto(pago.getMonto())
-                .medio(pago.getMedio())
-                .referencia(pago.getReferencia())
-                .estado(pago.getEstado())
+        // =============================================
+        // CIERRE DE CAJA
+        // =============================================
 
-                .registradoPorId(
-                        pago.getRegistradoPor() != null
-                                ? pago.getRegistradoPor().getId()
-                                : null)
+        @Override
+        public CierreCajaDTO cierreCaja(LocalDate fecha) {
+                ZoneOffset offset = ZoneOffset.ofHours(-4); // Bolivia UTC-4
+                OffsetDateTime desde = fecha.atStartOfDay().atOffset(offset);
+                OffsetDateTime hasta = fecha.plusDays(1).atStartOfDay().atOffset(offset);
 
-                .registradoPorNombre(
-                        pago.getRegistradoPor() != null
-                                ? pago.getRegistradoPor().getNombre()
-                                : null)
+                List<Pagos> pagos = pagosRepository.findByPagadoEnBetween(desde, hasta);
 
-                .pagadoEn(pago.getPagadoEn())
-                .build();
-    }
+                BigDecimal totalEfectivo = sumarPorMedio(pagos, "efectivo");
+                BigDecimal totalQr = sumarPorMedio(pagos, "qr");
+                BigDecimal totalTransferencia = sumarPorMedio(pagos, "transferencia");
+                BigDecimal totalTarjeta = sumarPorMedio(pagos, "tarjeta");
+                BigDecimal totalGeneral = pagos.stream()
+                                .map(Pagos::getMonto).reduce(BigDecimal.ZERO, BigDecimal::add);
+
+                List<CierreCajaDTO.CierreCajaDetalleDTO> detalle = pagos.stream()
+                                .map(p -> CierreCajaDTO.CierreCajaDetalleDTO.builder()
+                                                .numeroFactura(p.getFactura().getNumero())
+                                                .clienteNombre(p.getFactura().getClientes().getUsuarios().getNombre()
+                                                                + " "
+                                                                + p.getFactura().getClientes().getUsuarios()
+                                                                                .getApellido())
+                                                .tipo(p.getFactura().getCitas() != null ? "servicio" : "pedido")
+                                                .medio(p.getMedio())
+                                                .monto(p.getMonto())
+                                                .pagadoEn(p.getPagadoEn().toString())
+                                                .build())
+                                .collect(Collectors.toList());
+
+                return CierreCajaDTO.builder()
+                                .fecha(fecha)
+                                .totalEfectivo(totalEfectivo)
+                                .totalQr(totalQr)
+                                .totalTransferencia(totalTransferencia)
+                                .totalTarjeta(totalTarjeta)
+                                .totalGeneral(totalGeneral)
+                                .cantidadPagos(pagos.size())
+                                .detalle(detalle)
+                                .build();
+        }
+
+        private BigDecimal sumarPorMedio(List<Pagos> pagos, String medio) {
+                return pagos.stream()
+                                .filter(p -> medio.equals(p.getMedio()))
+                                .map(Pagos::getMonto)
+                                .reduce(BigDecimal.ZERO, BigDecimal::add);
+        }
+
+        private PagosDTO convertToDTO(Pagos pago) {
+                return PagosDTO.builder()
+                                .id(pago.getId())
+                                .facturaId(pago.getFactura() != null ? pago.getFactura().getId() : null)
+                                .facturaNumero(pago.getFactura() != null ? pago.getFactura().getNumero() : null)
+                                .monto(pago.getMonto())
+                                .medio(pago.getMedio())
+                                .referencia(pago.getReferencia())
+                                .estado(pago.getEstado())
+                                .registradoPorId(pago.getRegistradoPor() != null ? pago.getRegistradoPor().getId()
+                                                : null)
+                                .registradoPorNombre(
+                                                pago.getRegistradoPor() != null ? pago.getRegistradoPor().getNombre()
+                                                                : null)
+                                .pagadoEn(pago.getPagadoEn())
+                                .build();
+        }
 }

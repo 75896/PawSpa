@@ -15,6 +15,7 @@ import { format, addDays, subDays } from "date-fns";
 import { es } from "date-fns/locale";
 import { listarCitasPorFecha, agendarCita, confirmarCita, cancelarCita, listarServicios, listarGroomers } from "../../api/recepcionApi";
 import api from "../../utils/axiosConfig";
+import { Receipt } from "lucide-react";
 
 
 const schema = z.object({
@@ -220,7 +221,18 @@ const cargarMascotasDeCliente = async (clienteId) => {
               Paw<span className="bg-gradient-to-r from-purple-600 to-green-500 bg-clip-text text-transparent">Spa</span>
             </span>
             <span className="ml-2 text-sm text-gray-400">Agenda</span>
+
+            <Link
+                to="/recepcion/pagos"
+                className="flex items-center gap-1.5 text-sm text-gray-500 hover:text-purple-600 px-3 py-2 rounded-lg hover:bg-purple-50 transition-colors"
+            >
+            <Receipt className="w-4 h-4" />
+              Punto de venta
+            </Link>
+
           </div>
+
+
           <div className="flex items-center gap-3">
             <span className="text-sm text-gray-600">Hola, <strong>{usuario?.nombre}</strong></span>
             <button

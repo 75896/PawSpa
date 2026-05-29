@@ -8,30 +8,52 @@ import com.example.spapet.model.Fichas_grooming;
 import com.example.spapet.model.Groomers;
 import com.example.spapet.model.Mascotas;
 import com.example.spapet.model.Usuarios;
+import com.example.spapet.registro.auth.MailService;
 import com.example.spapet.repository.CitasRepository;
 import com.example.spapet.repository.Fichas_groomingRepository;
 import com.example.spapet.repository.GroomersRepository;
 import com.example.spapet.repository.UsuariosRepository;
+import com.example.spapet.service.FacturasService;
 import com.example.spapet.service.Fichas_groomingService;
 
-import lombok.RequiredArgsConstructor;
+//import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.context.annotation.Lazy;
 
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import java.util.Optional;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
-@RequiredArgsConstructor
+
 public class Fichas_groomingServiceImpl implements Fichas_groomingService {
 
         private final Fichas_groomingRepository fichasRepository;
         private final CitasRepository citasRepository;
+        private final MailService mailService;
         private final GroomersRepository groomersRepository;
         private final UsuariosRepository usuariosRepository;
+        private final FacturasService facturasService;
+
+        public Fichas_groomingServiceImpl(
+                        Fichas_groomingRepository fichasRepository,
+                        CitasRepository citasRepository,
+                        GroomersRepository groomersRepository,
+                        UsuariosRepository usuariosRepository,
+                        MailService mailService,
+                        @Lazy FacturasService facturasService) {
+                this.fichasRepository = fichasRepository;
+                this.citasRepository = citasRepository;
+                this.groomersRepository = groomersRepository;
+                this.usuariosRepository = usuariosRepository;
+                this.facturasService = facturasService;
+                this.mailService = mailService;
+        }
 
         @Override
         public List<Fichas_groomingDTO> listarPorCorreo(String correo) {
@@ -108,7 +130,26 @@ public class Fichas_groomingServiceImpl implements Fichas_groomingService {
                 cita.setEstado("completada");
                 citasRepository.save(cita);
 
-                return toDTO(fichasRepository.save(ficha));
+                fichasRepository.save(ficha);
+
+                // Generar factura automáticamente al cerrar ficha
+                try {
+                        facturasService.generarDesdeCita(cita.getId());
+                } catch (Exception e) {
+                        System.out.println("=== Error generando factura para cita: " + cita.getId() + " - "
+                                        + e.getMessage());
+                }
+
+                try {
+                        String correo = ficha.getCitas().getMascotas().getClientes().getUsuarios().getCorreo();
+                        String nombre = ficha.getCitas().getMascotas().getClientes().getUsuarios().getNombre();
+                        String mascota = ficha.getCitas().getMascotas().getNombre();
+                        mailService.enviarListoParaRecoger(correo, nombre, mascota);
+                } catch (Exception e) {
+                        log.error("Error enviando notificación listo para recoger: {}", e.getMessage());
+                }
+
+                return toDTO(ficha);
         }
 
         @Override

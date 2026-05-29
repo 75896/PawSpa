@@ -1,65 +1,55 @@
 package com.example.spapet.controller;
 
-import com.example.spapet.dto.ConfiguracionDTO;
-import com.example.spapet.service.ConfiguracionService;
-
+import com.example.spapet.model.Configuracion;
+import com.example.spapet.model.Usuarios;
+import com.example.spapet.repository.ConfiguracionRepository;
+import com.example.spapet.repository.UsuariosRepository;
 import lombok.RequiredArgsConstructor;
-
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/configuracion")
 @RequiredArgsConstructor
+@CrossOrigin(origins = "http://localhost:5173")
 public class ConfiguracionController {
 
-    private final ConfiguracionService configuracionService;
+    private final ConfiguracionRepository configuracionRepository;
+    private final UsuariosRepository usuariosRepository;
 
-    @GetMapping
-    public ResponseEntity<List<ConfiguracionDTO>> obtenerTodos() {
-
-        return ResponseEntity.ok(
-                configuracionService.obtenerTodos());
-    }
-
+    // Obtener una clave pública (para mostrar QR sin auth)
     @GetMapping("/{clave}")
-    public ResponseEntity<ConfiguracionDTO> obtenerPorClave(
-            @PathVariable String clave) {
-
-        return ResponseEntity.ok(
-                configuracionService.obtenerPorClave(clave));
+    public ResponseEntity<Map<String, String>> obtener(@PathVariable String clave) {
+        return configuracionRepository.findById(clave)
+                .map(c -> ResponseEntity.ok(Map.of("clave", c.getClave(), "valor", c.getValor())))
+                .orElse(ResponseEntity.notFound().build());
     }
 
-    @PostMapping
-    public ResponseEntity<ConfiguracionDTO> crear(
-            @RequestBody ConfiguracionDTO configuracionDTO) {
-
-        ConfiguracionDTO nuevaConfiguracion = configuracionService.crear(configuracionDTO);
-
-        return ResponseEntity
-                .status(HttpStatus.CREATED)
-                .body(nuevaConfiguracion);
-    }
-
+    // Actualizar o crear una clave (solo admin/recepcion)
     @PutMapping("/{clave}")
-    public ResponseEntity<ConfiguracionDTO> actualizar(
+    @PreAuthorize("hasAnyRole('ADMIN', 'RECEPCION')")
+    public ResponseEntity<Map<String, String>> actualizar(
             @PathVariable String clave,
-            @RequestBody ConfiguracionDTO configuracionDTO) {
+            @RequestBody Map<String, String> body,
+            @AuthenticationPrincipal String correo) {
 
-        return ResponseEntity.ok(
-                configuracionService.actualizar(clave, configuracionDTO));
-    }
+        Usuarios usuario = usuariosRepository.findByCorreo(correo)
+                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
 
-    @DeleteMapping("/{clave}")
-    public ResponseEntity<Void> eliminar(
-            @PathVariable String clave) {
+        Configuracion config = configuracionRepository.findById(clave)
+                .orElse(Configuracion.builder()
+                        .clave(clave)
+                        .descripcion(body.getOrDefault("descripcion", ""))
+                        .build());
 
-        configuracionService.eliminar(clave);
+        config.setValor(body.get("valor"));
+        config.setActualizadoPor(usuario);
+        configuracionRepository.save(config);
 
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(Map.of("clave", clave, "valor", config.getValor()));
     }
 }

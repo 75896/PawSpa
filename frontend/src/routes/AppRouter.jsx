@@ -18,6 +18,7 @@ import AuditoriaPage from "../pages/admin/AuditoriaPage";
 import AgendaPage from "../pages/recepcion/AgendaPage";
 import InventarioPage from "../pages/admin/InventarioPage";
 import CarritoPage from "../pages/cliente/CarritoPage";
+import PuntoVentaPage from "../pages/recepcion/PuntoVentaPage";
 
 
 //const ProtectedRoute = ({ children, roles }) => {
@@ -66,6 +67,12 @@ const AppRouter = () => {
 <Route path="/recepcion" element={
   <ProtectedRoute roles={["admin", "recepcion"]}>
     <AgendaPage />
+  </ProtectedRoute>
+} />
+
+<Route path="/recepcion/pagos" element={
+  <ProtectedRoute roles={["admin", "recepcion"]}>
+    <PuntoVentaPage />
   </ProtectedRoute>
 } />
 

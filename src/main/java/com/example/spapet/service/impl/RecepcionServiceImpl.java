@@ -3,6 +3,7 @@ package com.example.spapet.service.impl;
 import com.example.spapet.dto.*;
 import com.example.spapet.model.*;
 import com.example.spapet.repository.*;
+import com.example.spapet.registro.auth.MailService;
 import com.example.spapet.service.RecepcionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -10,10 +11,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class RecepcionServiceImpl implements RecepcionService {
@@ -25,6 +29,7 @@ public class RecepcionServiceImpl implements RecepcionService {
         private final Bloqueos_agendaRepository bloqueosRepository;
         private final UsuariosRepository usuariosRepository;
         private final ClientesRepository clientesRepository;
+        private final MailService mailService;
 
         @Override
         public List<CitasDTO> listarTodasCitas() {
@@ -103,16 +108,52 @@ public class RecepcionServiceImpl implements RecepcionService {
                                 .notasCliente(dto.getNotasCliente())
                                 .build();
 
+                // Verificar bloqueos
+
+                // ← AGREGAR AQUÍ — Verificar capacidad máxima del día
+                OffsetDateTime inicioHoy = dto.getFechaInicio().toLocalDate().atStartOfDay()
+                                .atOffset(dto.getFechaInicio().getOffset());
+                OffsetDateTime finHoy = inicioHoy.plusDays(1);
+
+                long citasDelDia = citasRepository.findByFechaInicioBetween(inicioHoy, finHoy)
+                                .stream()
+                                .filter(c -> c.getGroomers().getId().equals(groomer.getId()))
+                                .filter(c -> !c.getEstado().equals("cancelada"))
+                                .count();
+
+                if (citasDelDia >= groomer.getCapacidadMax()) {
+                        throw new RuntimeException("El groomer ha alcanzado su capacidad máxima del día ("
+                                        + groomer.getCapacidadMax() + " citas)");
+                }
+
                 return toCitaDTO(citasRepository.save(cita));
         }
 
+        // En el método cambiarEstado(), cuando estado es "confirmada"
         @Override
         @Transactional
         public CitasDTO cambiarEstado(UUID id, String estado) {
                 Citas cita = citasRepository.findById(id)
                                 .orElseThrow(() -> new RuntimeException("Cita no encontrada"));
                 cita.setEstado(estado);
-                return toCitaDTO(citasRepository.save(cita));
+                citasRepository.save(cita);
+
+                // Notificar confirmación
+                if (estado.equals("confirmada")) {
+                        try {
+                                String correo = cita.getMascotas().getClientes().getUsuarios().getCorreo();
+                                String nombre = cita.getMascotas().getClientes().getUsuarios().getNombre();
+                                String mascota = cita.getMascotas().getNombre();
+                                String servicio = cita.getServicios().getNombre();
+                                String fecha = cita.getFechaInicio()
+                                                .format(DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm"));
+                                mailService.enviarConfirmacionCita(correo, nombre, mascota, servicio, fecha);
+                        } catch (Exception e) {
+                                log.error("Error enviando confirmación: {}", e.getMessage());
+                        }
+                }
+
+                return toCitaDTO(cita);
         }
 
         @Override

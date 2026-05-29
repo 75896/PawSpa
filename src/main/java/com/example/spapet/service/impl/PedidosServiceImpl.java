@@ -3,10 +3,12 @@ package com.example.spapet.service.impl;
 import com.example.spapet.dto.*;
 import com.example.spapet.model.*;
 import com.example.spapet.repository.*;
+import com.example.spapet.service.FacturasService;
 import com.example.spapet.service.PedidosService;
-import lombok.RequiredArgsConstructor;
+//import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.context.annotation.Lazy;
 
 import java.math.BigDecimal;
 import java.net.URLEncoder;
@@ -16,7 +18,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
-@RequiredArgsConstructor
+
 public class PedidosServiceImpl implements PedidosService {
 
         private final PedidosRepository pedidosRepository;
@@ -24,7 +26,22 @@ public class PedidosServiceImpl implements PedidosService {
         private final UsuariosRepository usuariosRepository;
         private final Items_pedidoRepository itemsPedidoRepository;
         private final Variantes_productosRepository variantesRepository;
+        private final FacturasService facturasService;
 
+        public PedidosServiceImpl(
+                        PedidosRepository pedidosRepository,
+                        ClientesRepository clientesRepository,
+                        UsuariosRepository usuariosRepository,
+                        Items_pedidoRepository itemsPedidoRepository,
+                        Variantes_productosRepository variantesRepository,
+                        @Lazy FacturasService facturasService) {
+                this.pedidosRepository = pedidosRepository;
+                this.clientesRepository = clientesRepository;
+                this.usuariosRepository = usuariosRepository;
+                this.itemsPedidoRepository = itemsPedidoRepository;
+                this.variantesRepository = variantesRepository;
+                this.facturasService = facturasService;
+        }
         // =============================================
         // CRUD ADMIN (existente, sin cambios de fondo)
         // =============================================
@@ -291,6 +308,13 @@ public class PedidosServiceImpl implements PedidosService {
                 }
 
                 pedido.setEstado("confirmado");
+                Pedidos pedidoGuardado = pedidosRepository.save(pedido);
+                try {
+                        facturasService.generarDesdePedido(pedidoGuardado.getId());
+                } catch (Exception e) {
+                        System.out.println("=== Error generando factura para pedido: " + pedidoId + " - "
+                                        + e.getMessage());
+                }
                 return convertToDTO(pedidosRepository.save(pedido));
         }
 

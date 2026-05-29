@@ -4,7 +4,7 @@ import toast from "react-hot-toast";
 import {
   Heart, ShoppingCart, Trash2, Plus, Minus,
   Loader2, ArrowLeft, CheckCircle, MessageCircle,
-  Package, ChevronRight
+  Package, ChevronRight, X
 } from "lucide-react";
 import {
   verCarrito, obtenerOCrearCarrito, agregarItem,
@@ -41,6 +41,9 @@ const ModalVariantes = ({ producto, pedidoId, onClose, onAgregado }) => {
       setLoading(false);
     }
   };
+
+  
+
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
@@ -193,6 +196,10 @@ const CarritoPage = () => {
   const [mensajeData, setMensajeData]   = useState(null);
   const [modalVariantes, setModalVariantes] = useState(null); // { producto, pedidoId }
   const [actualizandoItem, setActualizandoItem] = useState(null);
+  const [modalPago, setModalPago]   = useState(false);
+const [medioPago, setMedioPago]   = useState("efectivo");
+const [referenciaPago, setReferenciaPago] = useState("");
+const [qrUrl, setQrUrl]           = useState("");
 
   // Si no está logueado, redirige
   // Esperar a que Zustand hidrate el store
@@ -208,11 +215,14 @@ useEffect(() => {
 }, []);
 
 // Redirigir si no hay token (solo después de hidratar)
+// Cargar QR configurado
 useEffect(() => {
-  if (!hidratado) return;
-  if (!token) {
-    navigate("/login", { state: { from: "/carrito" } });
-  }
+  if (!hidratado || !token) return;
+  import("../../api/pagosApi").then(({ obtenerConfiguracion }) => {
+    obtenerConfiguracion("qr_pago_url")
+      .then((res) => setQrUrl(res.data.valor))
+      .catch(() => {});
+  });
 }, [hidratado, token]);
 
   // Restaurar items pendientes del sessionStorage después del login
@@ -303,24 +313,35 @@ const restaurarPendientes = async (pedidoId) => {
   };
 
   const handleConfirmar = async () => {
-    if (!carrito?.items?.length) {
-      toast.error("Tu carrito está vacío");
-      return;
-    }
-    setConfirmando(true);
-    try {
-      await confirmarPedido(carrito.pedidoId);
-      // Generar mensaje automáticamente
-      const msgRes = await generarMensaje(carrito.pedidoId);
-      setMensajeData(msgRes.data);
-      setPedidoConfirmado(true);
-      toast.success("¡Pedido confirmado! 🎉");
-    } catch (err) {
-      toast.error(err.response?.data?.message || "Error al confirmar el pedido");
-    } finally {
-      setConfirmando(false);
-    }
-  };
+  if ((medioPago === "transferencia" || medioPago === "qr") && !referenciaPago.trim()) {
+    toast.error("Ingresa el número de comprobante");
+    return;
+  }
+  if (!carrito?.items?.length) {
+    toast.error("Tu carrito está vacío");
+    return;
+  }
+  setConfirmando(true);
+  try {
+    await confirmarPedido(carrito.pedidoId);
+    const msgRes = await generarMensaje(carrito.pedidoId);
+    // Agregar método de pago al mensaje
+    const mensajeConPago = {
+      ...msgRes.data,
+      mensaje: msgRes.data.mensaje
+        + `\nMétodo de pago: ${medioPago}`
+        + (referenciaPago ? `\nComprobante: ${referenciaPago}` : ""),
+    };
+    setMensajeData(mensajeConPago);
+    setPedidoConfirmado(true);
+    setModalPago(false);
+    toast.success("¡Pedido confirmado! 🎉");
+  } catch (err) {
+    toast.error(err.response?.data?.message || "Error al confirmar el pedido");
+  } finally {
+    setConfirmando(false);
+  }
+};
 
   if (loading) {
     return (
@@ -481,19 +502,126 @@ const restaurarPendientes = async (pedidoId) => {
                   </div>
                 </div>
 
-                <button
-                  onClick={handleConfirmar}
-                  disabled={confirmando || pedidoConfirmado}
-                  className="w-full mt-5 py-3 rounded-xl bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white font-medium text-sm transition-all shadow-sm disabled:opacity-60 flex items-center justify-center gap-2"
-                >
-                  {confirmando ? (
-                    <><Loader2 className="w-4 h-4 animate-spin" /> Confirmando...</>
-                  ) : pedidoConfirmado ? (
-                    <><CheckCircle className="w-4 h-4" /> Pedido confirmado</>
-                  ) : (
-                    <>Confirmar pedido <ChevronRight className="w-4 h-4" /></>
-                  )}
-                </button>
+                {/* Modal selección método de pago */}
+{modalPago && (
+  <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
+    <div className="bg-white rounded-2xl shadow-xl w-full max-w-md">
+      <div className="flex items-center justify-between p-6 border-b border-gray-100">
+        <h3 className="font-semibold text-gray-900">Método de pago</h3>
+        <button onClick={() => setModalPago(false)} className="text-gray-400 hover:text-gray-600">
+          <X className="w-5 h-5" />
+        </button>
+      </div>
+      <div className="p-6 space-y-5">
+
+        {/* Resumen */}
+        <div className="bg-gray-50 rounded-xl p-4 flex justify-between items-center">
+          <span className="text-sm text-gray-600">Total a pagar</span>
+          <span className="text-xl font-bold text-purple-600">
+            Bs. {Number(carrito?.total).toFixed(2)}
+          </span>
+        </div>
+
+        {/* Métodos */}
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-3">
+            Selecciona cómo vas a pagar
+          </label>
+          <div className="grid grid-cols-2 gap-3">
+            {[
+              { value: "efectivo",      label: "Efectivo",      icon: "💵" },
+              { value: "tarjeta",       label: "Tarjeta",       icon: "💳" },
+              { value: "transferencia", label: "Transferencia", icon: "🔄" },
+              { value: "qr",            label: "QR",            icon: "📱" },
+            ].map((m) => (
+              <button
+                key={m.value}
+                type="button"
+                onClick={() => setMedioPago(m.value)}
+                className={`flex items-center gap-2 p-4 rounded-xl border-2 transition-all text-left ${
+                  medioPago === m.value
+                    ? "border-purple-400 bg-purple-50 text-purple-700"
+                    : "border-gray-200 text-gray-600 hover:border-purple-200"
+                }`}
+              >
+                <span className="text-lg">{m.icon}</span>
+                <span className="text-sm font-medium">{m.label}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* QR imagen */}
+        {medioPago === "qr" && (
+          <div className="flex flex-col items-center gap-3 bg-gray-50 rounded-xl p-4 border border-gray-100">
+            <p className="text-xs text-gray-500 text-center">
+              Escanea el QR y realiza el pago, luego ingresa el número de comprobante
+            </p>
+            {qrUrl ? (
+              <img
+                src={qrUrl}
+                alt="QR de pago"
+                className="w-44 h-44 object-contain rounded-xl border border-gray-200 bg-white p-2"
+              />
+            ) : (
+              <div className="w-44 h-44 rounded-xl border-2 border-dashed border-gray-200 flex items-center justify-center text-gray-400 text-sm text-center p-4">
+                QR no configurado aún
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Referencia para transferencia y QR */}
+        {(medioPago === "transferencia" || medioPago === "qr") && (
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              N° de comprobante <span className="text-red-500">*</span>
+            </label>
+            <input
+              type="text"
+              value={referenciaPago}
+              onChange={(e) => setReferenciaPago(e.target.value)}
+              placeholder="Ej: TRX-123456"
+              className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-300 text-sm"
+            />
+          </div>
+        )}
+
+        <div className="flex gap-3 pt-2">
+          <button
+            onClick={() => setModalPago(false)}
+            className="flex-1 py-3 rounded-xl border border-gray-200 text-sm text-gray-600 hover:bg-gray-50"
+          >
+            Cancelar
+          </button>
+          <button
+            onClick={handleConfirmar}
+            disabled={confirmando}
+            className="flex-1 py-3 rounded-xl bg-gradient-to-r from-purple-500 to-purple-600 text-white font-medium text-sm disabled:opacity-60 flex items-center justify-center gap-2"
+          >
+            {confirmando
+              ? <><Loader2 className="w-4 h-4 animate-spin" /> Confirmando...</>
+              : <><CheckCircle className="w-4 h-4" /> Confirmar pedido</>
+            }
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+)}
+
+                
+<button
+  onClick={() => setModalPago(true)}
+  disabled={confirmando || pedidoConfirmado || !carrito?.items?.length}
+  className="w-full mt-5 py-3 rounded-xl bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white font-medium text-sm transition-all shadow-sm disabled:opacity-60 flex items-center justify-center gap-2"
+>
+  {pedidoConfirmado ? (
+    <><CheckCircle className="w-4 h-4" /> Pedido confirmado</>
+  ) : (
+    <>Confirmar pedido <ChevronRight className="w-4 h-4" /></>
+  )}
+</button>
 
                 {pedidoConfirmado && (
                   <button
