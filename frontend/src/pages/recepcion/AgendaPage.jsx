@@ -13,7 +13,15 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { format, addDays, subDays } from "date-fns";
 import { es } from "date-fns/locale";
-import { listarCitasPorFecha, agendarCita, confirmarCita, cancelarCita, listarServicios, listarGroomers } from "../../api/recepcionApi";
+import {
+  listarCitasPorFecha,
+  agendarCita,
+  confirmarCita,
+  cancelarCita,
+  listarServicios,
+  listarGroomers,
+  asignarGroomer
+} from "../../api/recepcionApi";
 import api from "../../utils/axiosConfig";
 import { Receipt } from "lucide-react";
 
@@ -73,6 +81,9 @@ const [mascotasCliente, setMascotasCliente] = useState([]);
 const [clienteSeleccionado, setClienteSeleccionado] = useState(null);
 const [busquedaCliente, setBusquedaCliente] = useState("");
 const [clientesFiltrados, setClientesFiltrados] = useState([]);
+const [modalAsignar, setModalAsignar] = useState(false);
+const [citaParaAsignar, setCitaParaAsignar] = useState(null);
+const [groomerAsignar, setGroomerAsignar] = useState("");
   const { logout, usuario } = useAuthStore();
   const navigate = useNavigate();
 
@@ -179,6 +190,26 @@ const cargarMascotasDeCliente = async (clienteId) => {
     }
   };
 
+  const handleAsignarGroomer = async () => {
+  if (!groomerAsignar) {
+    toast.error("Selecciona un groomer");
+    return;
+  }
+  setLoadingAccion(true);
+  try {
+    await asignarGroomer(citaParaAsignar.id, groomerAsignar);
+    toast.success("Groomer asignado correctamente");
+    setModalAsignar(false);
+    setGroomerAsignar("");
+    setCitaParaAsignar(null);
+    cargarCitas(fecha);
+  } catch (err) {
+    toast.error(err.response?.data?.message || "Error al asignar groomer");
+  } finally {
+    setLoadingAccion(false);
+  }
+};
+
   const handleCancelar = async () => {
     if (!motivoCancelacion.trim()) {
       toast.error("Ingresa un motivo de cancelación");
@@ -197,6 +228,8 @@ const cargarMascotasDeCliente = async (clienteId) => {
       setLoadingAccion(false);
     }
   };
+
+
 
   const inputClass = "w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-300 text-sm";
 
@@ -262,6 +295,18 @@ const cargarMascotasDeCliente = async (clienteId) => {
             </div>
           ))}
         </div>
+
+        {/* después de los stats */}
+{citas.filter(c => c.estado === "pendiente").length > 0 && (
+  <div className="bg-yellow-50 border border-yellow-200 rounded-2xl p-4 mb-6">
+    <div className="flex items-center gap-2">
+      <AlertCircle className="w-4 h-4 text-yellow-600" />
+      <span className="text-sm font-medium text-yellow-700">
+        {citas.filter(c => c.estado === "pendiente").length} cita(s) pendientes de confirmar
+      </span>
+    </div>
+  </div>
+)}
 
         <div className="bg-white rounded-2xl border border-gray-100">
 
@@ -360,24 +405,34 @@ const cargarMascotasDeCliente = async (clienteId) => {
                         {estadoIcon[c.estado]}
                         {c.estado}
                       </span>
-                      <div className="flex gap-2">
-                        {c.estado === "pendiente" && (
-                          <button
-                            onClick={() => handleConfirmar(c.id)}
-                            className="text-xs px-3 py-1 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors"
-                          >
-                            Confirmar
-                          </button>
-                        )}
-                        {c.estado !== "cancelada" && c.estado !== "completada" && (
-                          <button
-                            onClick={() => { setCitaSeleccionada(c); setModalCancelar(true); }}
-                            className="text-xs px-3 py-1 rounded-lg bg-red-50 text-red-500 hover:bg-red-100 transition-colors"
-                          >
-                            Cancelar
-                          </button>
-                        )}
-                      </div>
+                      {/* Botones */}
+<div className="flex gap-2">
+  {/* Botón asignar groomer — solo si está pendiente y sin groomer o groomer temporal */}
+  {c.estado === "pendiente" && (
+    <button
+      onClick={() => { setCitaParaAsignar(c); setModalAsignar(true); }}
+      className="text-xs px-3 py-1 rounded-lg bg-purple-50 text-purple-600 hover:bg-purple-100 transition-colors"
+    >
+      Asignar groomer
+    </button>
+  )}
+  {c.estado === "pendiente" && (
+    <button
+      onClick={() => handleConfirmar(c.id)}
+      className="text-xs px-3 py-1 rounded-lg bg-blue-50 text-blue-600 hover:bg-blue-100 transition-colors"
+    >
+      Confirmar
+    </button>
+  )}
+  {c.estado !== "cancelada" && c.estado !== "completada" && (
+    <button
+      onClick={() => { setCitaSeleccionada(c); setModalCancelar(true); }}
+      className="text-xs px-3 py-1 rounded-lg bg-red-50 text-red-500 hover:bg-red-100 transition-colors"
+    >
+      Cancelar
+    </button>
+  )}
+</div>
                     </div>
                   </div>
                 </div>
@@ -603,6 +658,66 @@ const cargarMascotasDeCliente = async (clienteId) => {
           </div>
         </Modal>
       )}
+
+      {/* Modal Asignar Groomer */}
+{modalAsignar && citaParaAsignar && (
+  <Modal title="Asignar groomer" onClose={() => { setModalAsignar(false); setGroomerAsignar(""); }}>
+    <div className="space-y-4">
+
+      {/* Info cita */}
+      <div className="bg-purple-50 rounded-xl p-4 space-y-1">
+        <div className="font-medium text-gray-900">{citaParaAsignar.mascotaNombre}</div>
+        <div className="text-sm text-gray-600">{citaParaAsignar.servicioNombre}</div>
+        <div className="text-sm text-gray-500">
+          {citaParaAsignar.fechaInicio && format(new Date(citaParaAsignar.fechaInicio), "dd/MM/yyyy HH:mm")}
+          {" — "}
+          {citaParaAsignar.fechaFin && format(new Date(citaParaAsignar.fechaFin), "HH:mm")}
+        </div>
+        {citaParaAsignar.notasCliente && (
+          <div className="text-xs text-gray-400 italic">
+            "{citaParaAsignar.notasCliente}"
+          </div>
+        )}
+      </div>
+
+      {/* Selector groomer */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          Seleccionar groomer
+        </label>
+        <select
+          value={groomerAsignar}
+          onChange={(e) => setGroomerAsignar(e.target.value)}
+          className="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-purple-300 text-sm"
+        >
+          <option value="">Seleccionar groomer</option>
+          {groomers.map((g) => (
+            <option key={g.id} value={g.id}>
+              {g.usuarioNombre} {g.usuarioApellido}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <div className="flex gap-3">
+        <button
+          onClick={() => { setModalAsignar(false); setGroomerAsignar(""); }}
+          className="flex-1 py-2.5 rounded-xl border border-gray-200 text-sm text-gray-600 hover:bg-gray-50"
+        >
+          Cancelar
+        </button>
+        <button
+          onClick={handleAsignarGroomer}
+          disabled={loadingAccion || !groomerAsignar}
+          className="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-purple-500 to-purple-600 text-white text-sm font-medium disabled:opacity-60 flex items-center justify-center gap-2"
+        >
+          {loadingAccion && <Loader2 className="w-4 h-4 animate-spin" />}
+          Asignar
+        </button>
+      </div>
+    </div>
+  </Modal>
+)}
 
     </div>
   );

@@ -13,3 +13,5 @@ export const crearBloqueo         = (data)       => api.post("/recepcion/bloqueo
 export const eliminarBloqueo      = (id)         => api.delete(`/recepcion/bloqueos/${id}`);
 export const buscarClientes  = ()        => api.get("/admin/usuarios?rol=cliente");
 export const getMascotasCliente = (clienteId) => api.get(`/admin/clientes/${clienteId}/mascotas`);
+export const asignarGroomer = (citaId, groomerId) => api.patch(`/recepcion/citas/${citaId}/asignar-groomer?groomerId=${groomerId}`);
+

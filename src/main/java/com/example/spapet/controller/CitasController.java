@@ -7,8 +7,9 @@ import lombok.RequiredArgsConstructor;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 
 import java.util.List;
 import java.util.UUID;
@@ -62,5 +63,13 @@ public class CitasController {
         citasService.eliminar(id);
 
         return ResponseEntity.noContent().build();
+    }
+
+    @PostMapping("/citas")
+    @PreAuthorize("hasRole('CLIENTE')")
+    public ResponseEntity<CitasDTO> solicitarCita(
+            @AuthenticationPrincipal String correo,
+            @RequestBody CitasDTO dto) {
+        return ResponseEntity.ok(citasService.solicitarCita(correo, dto));
     }
 }

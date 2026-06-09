@@ -19,6 +19,8 @@ public interface RecepcionService {
 
     CitasDTO cancelarCita(UUID id, String motivo);
 
+    CitasDTO asignarGroomer(UUID citaId, UUID groomerId);
+
     List<ServiciosDTO> listarServicios();
 
     List<GroomersDTO> listarGroomers();

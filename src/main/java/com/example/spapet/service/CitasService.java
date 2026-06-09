@@ -19,4 +19,6 @@ public interface CitasService {
 
     List<CitasDTO> listarPorCorreo(String correo);
 
+    CitasDTO solicitarCita(String correo, CitasDTO dto);
+
 }

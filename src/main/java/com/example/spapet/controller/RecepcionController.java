@@ -105,4 +105,12 @@ public class RecepcionController {
             @PathVariable UUID usuarioId) {
         return ResponseEntity.ok(recepcionService.listarMascotasPorUsuarioId(usuarioId));
     }
+
+    @PatchMapping("/citas/{id}/asignar-groomer")
+    @PreAuthorize("hasAnyRole('ADMIN', 'RECEPCION')")
+    public ResponseEntity<CitasDTO> asignarGroomer(
+            @PathVariable UUID id,
+            @RequestParam UUID groomerId) {
+        return ResponseEntity.ok(recepcionService.asignarGroomer(id, groomerId));
+    }
 }

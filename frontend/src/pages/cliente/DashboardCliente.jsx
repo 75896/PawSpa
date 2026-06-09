@@ -13,8 +13,12 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { format } from "date-fns";
 import { es } from "date-fns/locale";
-import { getMisMascotas, crearMascota, getMisCitas, listarRazas, listarRazasPorEspecie } from "../../api/clienteApi";
-
+import {
+  getMisMascotas, crearMascota, getMisCitas,
+  listarRazas, listarRazasPorEspecie,
+  solicitarCita, listarServicios
+} from "../../api/clienteApi";
+//, listarGroomers => por si necesito en el import
 const schema = z.object({
   nombre:       z.string().min(2, "Mínimo 2 caracteres"),
   especie:      z.enum(["perro", "gato", "conejo", "ave", "otro"]),
@@ -69,6 +73,20 @@ const DashboardCliente = () => {
   const navigate                              = useNavigate();
   const [razas, setRazas]               = useState([]);
   const [especieSeleccionada, setEspecieSeleccionada] = useState("perro");
+  const [modalCita, setModalCita]       = useState(false);
+const [servicios, setServicios]       = useState([]);
+//const [groomers, setGroomers]         = useState([]);
+const [loadingCita, setLoadingCita] = useState(false);
+
+const schemasCita = z.object({
+  mascotaId:    z.string().min(1, "Selecciona una mascota"),
+  servicioId:   z.string().min(1, "Selecciona un servicio"),
+  groomerId:    z.string().optional(),
+  fechaInicio:  z.string().min(1, "Selecciona fecha y hora"),
+  notasCliente: z.string().optional(),
+});
+
+const formCita = useForm({ resolver: zodResolver(schemasCita) });
 
   const { register, handleSubmit, reset, formState: { errors } } = useForm({
     resolver: zodResolver(schema),
@@ -106,10 +124,51 @@ const DashboardCliente = () => {
     }
   };
 
+  const cargarServicios = async () => {
+  try {
+    const res = await listarServicios();
+    setServicios(res.data);
+  } catch {
+    toast.error("Error al cargar servicios");
+  }
+};
+
+//const cargarGroomers = async () => {
+//  try {
+//    const res = await listarGroomers();
+//    setGroomers(res.data);
+//  } catch {
+//    toast.error("Error al cargar groomers");
+//  }
+//};
+
+const handleSolicitarCita = async (data) => {
+  setLoadingCita(true);
+  try {
+    await solicitarCita({
+      mascotaId:    data.mascotaId,
+      servicioId:   data.servicioId,
+      fechaInicio:  new Date(data.fechaInicio).toISOString(),
+      notasCliente: data.notasCliente,
+      estado:       "pendiente",
+    });
+    toast.success("¡Cita solicitada! Recepción la confirmará pronto.");
+    setModalCita(false);
+    formCita.reset();
+    cargarCitas();
+  } catch (err) {
+    toast.error(err.response?.data?.message || "Error al solicitar cita");
+  } finally {
+    setLoadingCita(false);
+  }
+};
+
   useEffect(() => {
   cargarMascotas();
   cargarCitas();
   cargarRazas("perro");
+  cargarServicios();
+  //cargarGroomers();
 }, []);
 
   const handleLogout = () => {
@@ -175,14 +234,26 @@ const DashboardCliente = () => {
       <div className="max-w-6xl mx-auto px-6 py-8">
 
         {/* Bienvenida */}
-        <div className="bg-gradient-to-r from-purple-500 to-green-500 rounded-2xl p-6 mb-8 text-white">
-          <h1 className="text-2xl font-bold mb-1">
-            Bienvenido, {usuario?.nombre} 🐾
-          </h1>
-          <p className="text-purple-100 text-sm">
-            Gestiona tus mascotas y citas desde aquí.
-          </p>
-        </div>
+        {/* Bienvenida */}
+<div className="bg-gradient-to-r from-purple-500 to-green-500 rounded-2xl p-6 mb-8 text-white">
+  <div className="flex items-center justify-between">
+    <div>
+      <h1 className="text-2xl font-bold mb-1">
+        Bienvenido, {usuario?.nombre} 🐾
+      </h1>
+      <p className="text-purple-100 text-sm">
+        Gestiona tus mascotas y citas desde aquí.
+      </p>
+    </div>
+    <button
+      onClick={() => setModalCita(true)}
+      className="flex items-center gap-2 px-4 py-2.5 rounded-xl bg-white/20 hover:bg-white/30 text-white text-sm font-medium transition-all"
+    >
+      <Plus className="w-4 h-4" />
+      Agendar cita
+    </button>
+  </div>
+</div>
 
         <div className="grid md:grid-cols-2 gap-8">
 
@@ -448,6 +519,133 @@ const DashboardCliente = () => {
 </form>
         </Modal>
       )}
+
+      {/* Modal Nueva Cita */}
+{modalCita && (
+  <Modal title="Solicitar cita" onClose={() => { setModalCita(false); formCita.reset(); }}>
+    <form onSubmit={formCita.handleSubmit(handleSolicitarCita)} className="space-y-4">
+
+      {/* Mascota */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          Tu mascota
+        </label>
+        <select {...formCita.register("mascotaId")} className={inputClass}>
+          <option value="">Seleccionar mascota</option>
+          {mascotas.map((m) => (
+            <option key={m.id} value={m.id}>
+              {m.nombre} — {m.especie}
+            </option>
+          ))}
+        </select>
+        {formCita.formState.errors.mascotaId && (
+          <p className="text-red-500 text-xs mt-1">
+            {formCita.formState.errors.mascotaId.message}
+          </p>
+        )}
+        {mascotas.length === 0 && (
+          <p className="text-yellow-600 text-xs mt-1">
+            Primero registra una mascota
+          </p>
+        )}
+      </div>
+
+      {/* Servicio */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          Servicio
+        </label>
+        <select {...formCita.register("servicioId")} className={inputClass}>
+          <option value="">Seleccionar servicio</option>
+          {servicios.map((s) => (
+            <option key={s.id} value={s.id}>
+              {s.nombre} — {s.duracionMin} min — Bs. {s.precioBase}
+            </option>
+          ))}
+        </select>
+        {formCita.formState.errors.servicioId && (
+          <p className="text-red-500 text-xs mt-1">
+            {formCita.formState.errors.servicioId.message}
+          </p>
+        )}
+      </div>
+
+    {/*  groomer no necesario
+      <div> 
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          Groomer preferido <span className="text-gray-400">(opcional)</span>
+        </label>
+        <select {...formCita.register("groomerId")} className={inputClass}>
+          <option value="">Sin preferencia</option>
+          {groomers.map((g) => (
+            <option key={g.id} value={g.id}>
+              {g.usuarioNombre} {g.usuarioApellido}
+            </option>
+          ))}
+        </select>
+        <p className="text-xs text-gray-400 mt-1">
+          Si no eliges, recepción asignará uno disponible
+        </p>
+      </div> */}
+
+      {/* Fecha y hora */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          Fecha y hora preferida
+        </label>
+        <input
+          {...formCita.register("fechaInicio")}
+          type="datetime-local"
+          min={new Date().toISOString().slice(0, 16)}
+          className={inputClass}
+        />
+        {formCita.formState.errors.fechaInicio && (
+          <p className="text-red-500 text-xs mt-1">
+            {formCita.formState.errors.fechaInicio.message}
+          </p>
+        )}
+      </div>
+
+      {/* Notas */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1">
+          Notas o instrucciones <span className="text-gray-400">(opcional)</span>
+        </label>
+        <textarea
+          {...formCita.register("notasCliente")}
+          rows={2}
+          placeholder="Instrucciones especiales para el groomer..."
+          className={inputClass}
+        />
+      </div>
+
+      {/* Info */}
+      <div className="bg-blue-50 border border-blue-100 rounded-xl p-3">
+        <p className="text-xs text-blue-600">
+          ℹ️ Tu cita quedará en estado <strong>pendiente</strong> hasta que recepción la confirme. Recibirás un correo de confirmación.
+        </p>
+      </div>
+
+      <div className="flex gap-3 pt-2">
+        <button
+          type="button"
+          onClick={() => { setModalCita(false); formCita.reset(); }}
+          className="flex-1 py-2.5 rounded-xl border border-gray-200 text-sm text-gray-600 hover:bg-gray-50"
+        >
+          Cancelar
+        </button>
+        <button
+          type="submit"
+          disabled={loadingCita || mascotas.length === 0}
+          className="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-purple-500 to-purple-600 text-white text-sm font-medium disabled:opacity-60 flex items-center justify-center gap-2"
+        >
+          {loadingCita && <Loader2 className="w-4 h-4 animate-spin" />}
+          Solicitar cita
+        </button>
+      </div>
+    </form>
+  </Modal>
+)}
 
     </div>
   );

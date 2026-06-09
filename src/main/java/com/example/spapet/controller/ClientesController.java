@@ -6,6 +6,8 @@ import com.example.spapet.dto.CitasDTO;
 import com.example.spapet.dto.MascotasDTO;
 import com.example.spapet.dto.MensajePedidoDTO;
 import com.example.spapet.dto.PedidosDTO;
+import com.example.spapet.dto.ServiciosDTO;
+import com.example.spapet.repository.ServiciosRepository;
 import com.example.spapet.service.CitasService;
 import com.example.spapet.service.MascotasService;
 import com.example.spapet.service.PedidosService;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/cliente")
@@ -29,6 +32,7 @@ public class ClientesController {
     private final MascotasService mascotasService;
     private final CitasService citasService;
     private final PedidosService pedidosService;
+    private final ServiciosRepository serviciosRepository;
 
     @GetMapping("/mascotas")
     @PreAuthorize("hasRole('CLIENTE')")
@@ -65,6 +69,32 @@ public class ClientesController {
     public ResponseEntity<List<MascotasDTO>> mascotasPorCliente(
             @PathVariable UUID clienteId) {
         return ResponseEntity.ok(mascotasService.listarPorClienteId(clienteId));
+    }
+
+    @PostMapping("/citas")
+    @PreAuthorize("hasRole('CLIENTE')")
+    public ResponseEntity<CitasDTO> solicitarCita(
+            @AuthenticationPrincipal String correo,
+            @RequestBody CitasDTO dto) {
+        return ResponseEntity.ok(citasService.solicitarCita(correo, dto));
+    }
+
+    @GetMapping("/servicios")
+    @PreAuthorize("hasRole('CLIENTE')")
+    public ResponseEntity<List<ServiciosDTO>> listarServicios() {
+        return ResponseEntity.ok(
+                serviciosRepository.findByActivoTrue()
+                        .stream()
+                        .map(s -> ServiciosDTO.builder()
+                                .id(s.getId())
+                                .nombre(s.getNombre())
+                                .descripcion(s.getDescripcion())
+                                .duracionMin(s.getDuracionMin())
+                                .precioBase(s.getPrecioBase())
+                                .permiteDobleBooking(s.getPermiteDobleBooking())
+                                .activo(s.getActivo())
+                                .build())
+                        .collect(Collectors.toList()));
     }
 
     // =============================================

@@ -310,4 +310,23 @@ public class RecepcionServiceImpl implements RecepcionService {
                 return mascotasRepository.findByClientesId(cliente.getId())
                                 .stream().map(this::toMascotaDTO).collect(Collectors.toList());
         }
+
+        @Override
+        @Transactional
+        public CitasDTO asignarGroomer(UUID citaId, UUID groomerId) {
+                Citas cita = citasRepository.findById(citaId)
+                                .orElseThrow(() -> new RuntimeException("Cita no encontrada"));
+                Groomers groomer = groomersRepository.findById(groomerId)
+                                .orElseThrow(() -> new RuntimeException("Groomer no encontrado"));
+
+                // Verificar solapamiento
+                List<Citas> solapadas = citasRepository.findSolapadas(
+                                groomer.getId(), cita.getFechaInicio(), cita.getFechaFin());
+                if (!solapadas.isEmpty()) {
+                        throw new RuntimeException("El groomer ya tiene una cita en ese horario");
+                }
+
+                cita.setGroomers(groomer);
+                return toCitaDTO(citasRepository.save(cita));
+        }
 }
